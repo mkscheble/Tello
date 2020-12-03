@@ -3,7 +3,7 @@ import cv2
 import pdb
 import datetime
 from numpy import array
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 
 def recordingSetup(filename, cap):
     width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
@@ -21,7 +21,7 @@ def loadCalibration():
     dist = np.array(calibration_data['dist'])
     return mtx, dist
 
-def arucoAnalysis(arucoDict, frame, parameters, mtx, dist, textRecorder):
+def arucoAnalysis(arucoDict, frame, parameters, mtx, dist):
     # Detect and draw the markers in the image
     markerCorners, markerIDs, rejectedCandidates = cv2.aruco.detectMarkers(frame, arucoDict, parameters=parameters)
     cv2.aruco.drawDetectedMarkers(frame, markerCorners, markerIDs)
@@ -45,12 +45,12 @@ def arucoAnalysis(arucoDict, frame, parameters, mtx, dist, textRecorder):
             cv2.putText(frame, text, position, font, 0.4, (255, 255, 255), 1, cv2.LINE_AA)
 
             # Record data
-            textRecorder.write(str([rvec[marker_idx][0].tolist(), tvec[marker_idx][0].tolist(), markerIDs[marker_idx][0]]))
-            if marker_idx < len(markerIDs)-1:
-                textRecorder.write(',')
-    else:
-            textRecorder.write(str([rvec, tvec]))
-    textRecorder.write("\n")
+    #         textRecorder.write(str([rvec[marker_idx][0].tolist(), tvec[marker_idx][0].tolist(), markerIDs[marker_idx][0]]))
+    #         if marker_idx < len(markerIDs)-1:
+    #             textRecorder.write(',')
+    # else:
+    #         textRecorder.write(str([rvec, tvec]))
+    # textRecorder.write("\n")
 
     return frame, markerIDs, rvec, tvec
 
@@ -65,9 +65,9 @@ def visionProcessing():
 
 
     # Setup for writing data
-    filename = "Outputs/output_" + datetime.datetime.now().strftime("%m-%d-%Y_%H%M%S")
-    vidRecorder = recordingSetup(filename, cap)
-    textRecorder = open(filename + ".txt",'a',buffering=1)
+    # filename = "Outputs/output_" + datetime.datetime.now().strftime("%m-%d-%Y_%H%M%S")
+    # vidRecorder = recordingSetup(filename, cap)
+    # textRecorder = open(filename + ".txt",'a',buffering=1)
 
     #Load the dictionary that was used to generate the markers.
     arucoDict = cv2.aruco.Dictionary_get(cv2.aruco.DICT_6X6_250)
@@ -82,7 +82,7 @@ def visionProcessing():
         # Read a frame off video feed
         ret, frame = cap.read()
 
-        frame, markerIDs, rvec, tvec = arucoAnalysis(arucoDict, frame, parameters, mtx, dist, textRecorder)
+        frame, markerIDs, rvec, tvec = arucoAnalysis(arucoDict, frame, parameters, mtx, dist)
 
         # Display/record video frame
         if camera != 0:
@@ -93,7 +93,7 @@ def visionProcessing():
             cv2.imshow('Tello',resize)
         else:
             cv2.imshow('frame',frame)
-        vidRecorder.write(frame)
+        # vidRecorder.write(frame)
 
         # Halt stream if "q" typed
             # Match speed by setting waitkey parameter to fps
