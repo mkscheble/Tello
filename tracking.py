@@ -9,7 +9,7 @@ startCounter = 0  # for no Flight 1   - for flight 0
 
 myDrone = initializeTello()
 myFile = 'thisone'
-writeDataHeader(myFile)
+writeFileHeader(myFile)
 
 while True:
 

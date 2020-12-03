@@ -3,7 +3,7 @@ def writeFileHeader(dataFileName):
     fileout.close()
 
 def appendtoFile(dataFileName, position):
-    fileout = open(data_file_name, 'a')  # append
+    fileout = open(dataFileName, 'a')  # append
     print('writing data to file')
     fileout.write('position: ' + str(position))
     fileout.close()
