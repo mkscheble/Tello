@@ -53,6 +53,7 @@ def trackFace(myDrone, info, w, pid, pError):
     speed = pid[0] * error + pid[1] * (error - pError)
     speed = int(np.clip(speed, -100, 100))
     print(speed)
+    print('area: ' + str(info[1]) + "\n")
     if info[0][0] != 0:
         myDrone.yaw_velocity = speed
     else:
