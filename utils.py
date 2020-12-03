@@ -127,3 +127,4 @@ def getDirection(img, info, specs):
 def dothething(myDrone):
     myDrone.move_up(60)
     myDrone.move_right(60)
+

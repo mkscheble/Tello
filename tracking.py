@@ -1,6 +1,10 @@
 from utils import *
 import cv2
 from writedata import *
+from time import sleep
+import time
+dataQ = Queue()
+stateQ = LifoQueue()
 
 # w, h = 360, 240
 w, h = 640, 480
@@ -14,6 +18,7 @@ pError3 = 0
 startCounter = 0  # for no Flight 1   - for flight 0
 specs = [w, h, deadZone]
 dir = 0
+
 
 myDrone = initializeTello()
 myFile = 'thisone'
@@ -34,6 +39,7 @@ while True:
     ## Step 3
     pError, pError2, pError3 = trackFace(myDrone, info, w, pid, pid2, pid3, pError, pError2, pError3, dir)
     appendtoFile(myFile, myDrone.get_speed(), myDrone.get_flight_time())
+
 
     cv2.imshow('Image', img)
     if cv2.waitKey(1) & 0xFF == ord('q'):
