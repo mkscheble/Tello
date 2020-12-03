@@ -3,7 +3,7 @@ import cv2
 from writedata import *
 
 w, h = 360, 240
-pid = [0.4, 0.4, 0]
+pid = [0.2, 0.4, 0]
 pError = 0
 startCounter = 0  # for no Flight 1   - for flight 0
 
@@ -17,7 +17,7 @@ while True:
     if startCounter == 0:
         myDrone.takeoff()
         startCounter = 1
-    print('battery: ' + str(myDrone.get_battery()))
+    # print('battery: ' + str(myDrone.get_battery()))
     ## Step 1
     img = telloGetFrame(myDrone, w, h)
     ## Step 2
