@@ -123,3 +123,7 @@ def getDirection(img, info, specs):
                       (int(frameWidth / 2 + deadZone), frameHeight), (0, 0, 255), cv2.FILLED)
         dir = 4
     return img, dir
+
+def dothething(myDrone):
+    myDrone.move_up(60)
+    myDrone.move_right(60)
