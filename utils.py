@@ -47,7 +47,7 @@ def findFace(img):
         return img, [[0, 0], 0]
 
 
-def trackFace(myDrone, info, w, pid, pid2, pError, pError2):
+def trackFace(myDrone, info, w, pid, pid2, pid3, pError, pError2, pError3, dir):
     ## PID
     error = info[0][0] - w // 2
     speed = pid[0] * error + pid[1] * (error - pError)
@@ -60,8 +60,13 @@ def trackFace(myDrone, info, w, pid, pid2, pError, pError2):
     speed2 = pid2[0] * error2 + pid2[1] * (error2 - pError2)
     speed2 = int(np.clip(speed2, -100, 100))
 
+    # PID for yaw angle, slower than left right movement
+    error3 = info[1] - 10000
+    speed3 = pid3[0] * error3 + pid3[1] * (error3 - pError3)
+    speed3 = int(np.clip(speed3, -100, 100))
+
     if info[0][0] != 0:
-        # myDrone.yaw_velocity = speed
+        myDrone.yaw_velocity = speed3
         myDrone.left_right_velocity = speed
         print(speed)
         if info[1] != 0:
@@ -82,4 +87,39 @@ def trackFace(myDrone, info, w, pid, pid2, pError, pError2):
                                 myDrone.for_back_velocity,
                                 myDrone.up_down_velocity,
                                 myDrone.yaw_velocity)
-    return error, error2
+    return error, error2, error3
+
+
+def getDirection(img, info, specs):
+    cx = info[0][0]
+    cy = info[0][1]
+    frameWidth = specs[0]
+    frameHeight = specs[1]
+    deadZone = specs[2]
+
+    cv2.line(img, (int(frameWidth / 2) - deadZone, 0), (int(frameWidth / 2) - deadZone, frameHeight), (255, 255, 0), 3)
+    cv2.line(img, (int(frameWidth / 2) + deadZone, 0), (int(frameWidth / 2) + deadZone, frameHeight), (255, 255, 0), 3)
+    cv2.line(img, (0, int(frameHeight / 2) - deadZone), (frameWidth, int(frameHeight / 2) - deadZone), (255, 255, 0), 3)
+    cv2.line(img, (0, int(frameHeight / 2) + deadZone), (frameWidth, int(frameHeight / 2) + deadZone), (255, 255, 0), 3)
+
+    if (cx < int(frameWidth / 2) - deadZone):
+        cv2.putText(img, " GO LEFT ", (20, 50), cv2.FONT_HERSHEY_COMPLEX, 1, (0, 0, 255), 3)
+        cv2.rectangle(img, (0, int(frameHeight / 2 - deadZone)),
+                      (int(frameWidth / 2) - deadZone, int(frameHeight / 2) + deadZone), (0, 0, 255), cv2.FILLED)
+        dir = 1
+    elif (cx > int(frameWidth / 2) + deadZone):
+        cv2.putText(img, " GO RIGHT ", (20, 50), cv2.FONT_HERSHEY_COMPLEX, 1, (0, 0, 255), 3)
+        cv2.rectangle(img, (int(frameWidth / 2 + deadZone), int(frameHeight / 2 - deadZone)),
+                      (frameWidth, int(frameHeight / 2) + deadZone), (0, 0, 255), cv2.FILLED)
+        dir = 2
+    elif (cy < int(frameHeight / 2) - deadZone):
+        cv2.putText(img, " GO UP ", (20, 50), cv2.FONT_HERSHEY_COMPLEX, 1, (0, 0, 255), 3)
+        cv2.rectangle(img, (int(frameWidth / 2 - deadZone), 0),
+                      (int(frameWidth / 2 + deadZone), int(frameHeight / 2) - deadZone), (0, 0, 255), cv2.FILLED)
+        dir = 3
+    elif (cy > int(frameHeight / 2) + deadZone):
+        cv2.putText(img, " GO DOWN ", (20, 50), cv2.FONT_HERSHEY_COMPLEX, 1, (0, 0, 255), 3)
+        cv2.rectangle(img, (int(frameWidth / 2 - deadZone), int(frameHeight / 2) + deadZone),
+                      (int(frameWidth / 2 + deadZone), frameHeight), (0, 0, 255), cv2.FILLED)
+        dir = 4
+    return img, dir
