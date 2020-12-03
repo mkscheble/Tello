@@ -14,7 +14,7 @@ pid3 = [0.001, 0.001, 0]
 pError = 0
 pError2 = 0
 pError3 = 0
-startCounter = 0  # for no Flight 1   - for flight 0
+startCounter = 1  # for no Flight 1   - for flight 0
 specs = [w, h, deadZone]
 dir = 0
 data = []
@@ -42,17 +42,12 @@ while True:
     data.append(myDrone.get_speed())
     data.append(myDrone.get_height())
     data.append(myDrone.get_flight_time())
+    data.append(time.time())
     dataQ.put(data)
 
     cv2.imshow('Image', img)
-    if cv2.waitKey(1) or 0xFF == ord('q') or 'q' == input(''):
+    if cv2.waitKey(1) & 0xFF == ord('q'):
         myDrone.land()
         appendtoFile(myFile, dataQ)
         cv2.destroyAllWindows()
         break
-
-    # except KeyboardInterrupt as e:
-    #     myDrone.land()
-    #     appendtoFile(myFile, dataQ)
-    #     cv2.destroyAllWindows()
-    #     break

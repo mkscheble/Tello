@@ -12,5 +12,5 @@ def appendtoFile(dataFileName, dataQ):
     print('writing data to file')
     while not dataQ.empty():
         telemdata = dataQ.get()
-        np.savetxt(fileout, [telemdata], fmt='%7.3f', delimiter=',')  # need to make telemdata a list
+        fileout.write(str(telemdata) + '\n')
     fileout.close()
