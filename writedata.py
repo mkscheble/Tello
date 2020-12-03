@@ -1,9 +1,10 @@
 def writeFileHeader(dataFileName):
-    fileout = open(dataFileName,'w')   
+    fileout = open(dataFileName,'w')
+    fileout.write('begin')
     fileout.close()
 
-def appendtoFile(dataFileName, position):
+def appendtoFile(dataFileName, speed, time):
     fileout = open(dataFileName, 'a')  # append
     print('writing data to file')
-    fileout.write('yaw: ' + str(position))
+    fileout.write('[str(speed), str(time)]')
     fileout.close()
