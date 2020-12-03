@@ -45,8 +45,14 @@ while True:
     dataQ.put(data)
 
     cv2.imshow('Image', img)
-    if cv2.waitKey(1) & 0xFF == ord('q'):
+    if cv2.waitKey(1) or 0xFF == ord('q') or 'q' == input(''):
         myDrone.land()
         appendtoFile(myFile, dataQ)
         cv2.destroyAllWindows()
         break
+
+    # except KeyboardInterrupt as e:
+    #     myDrone.land()
+    #     appendtoFile(myFile, dataQ)
+    #     cv2.destroyAllWindows()
+    #     break
