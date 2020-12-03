@@ -47,7 +47,7 @@ def findFace(img):
         return img, [[0, 0], 0]
 
 
-def trackFace(myDrone, info, w, pid, pError, pError2):
+def trackFace(myDrone, info, w, pid, pid2, pError, pError2):
     ## PID
     error = info[0][0] - w // 2
     speed = pid[0] * error + pid[1] * (error - pError)
@@ -57,14 +57,20 @@ def trackFace(myDrone, info, w, pid, pError, pError2):
 
     #PID for forwards backwards
     error2 = info[1] - 10000
-    speed2 = pid[0] * error2 + pid[1] * (error2 - pError2)
+    speed2 = pid2[0] * error2 + pid2[1] * (error2 - pError2)
     speed2 = int(np.clip(speed2, -100, 100))
 
     if info[0][0] != 0:
-        myDrone.yaw_velocity = speed
+        # myDrone.yaw_velocity = speed
         myDrone.left_right_velocity = speed
+        print(speed)
         if info[1] != 0:
-            myDrone.for_back_velocity = speed2
+            if speed2 < 0:
+                myDrone.move_forward = speed2
+            else:
+                myDrone.move_back = speed2
+            print('s' + str(speed2) + '\n')
+            print('e' + str(error2)+ '\n')
     else:
         myDrone.for_back_velocity = 0
         myDrone.left_right_velocity = 0
@@ -76,4 +82,4 @@ def trackFace(myDrone, info, w, pid, pError, pError2):
                                 myDrone.for_back_velocity,
                                 myDrone.up_down_velocity,
                                 myDrone.yaw_velocity)
-    return error
+    return error, error2

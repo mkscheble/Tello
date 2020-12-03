@@ -4,6 +4,7 @@ from writedata import *
 
 w, h = 360, 240
 pid = [0.2, 0.4, 0]
+pid2 = [0.01, 0.01, 0]
 pError = 0
 pError2 = 0
 startCounter = 0  # for no Flight 1   - for flight 0
@@ -24,7 +25,7 @@ while True:
     ## Step 2
     img, info = findFace(img)
     ## Step 3
-    pError, pError2 = trackFace(myDrone, info, w, pid, pError, pError2)
+    pError, pError2 = trackFace(myDrone, info, w, pid, pid2, pError, pError2)
     appendtoFile(myFile, myDrone.get_speed(), myDrone.get_flight_time())
     
     # print(info[0][0])
