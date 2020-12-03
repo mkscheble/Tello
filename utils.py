@@ -96,32 +96,32 @@ def getDirection(img, info, specs):
     frameWidth = specs[0]
     frameHeight = specs[1]
     deadZone = specs[2]
-
+    dir = 0
     cv2.line(img, (int(frameWidth / 2) - deadZone, 0), (int(frameWidth / 2) - deadZone, frameHeight), (255, 255, 0), 3)
     cv2.line(img, (int(frameWidth / 2) + deadZone, 0), (int(frameWidth / 2) + deadZone, frameHeight), (255, 255, 0), 3)
     cv2.line(img, (0, int(frameHeight / 2) - deadZone), (frameWidth, int(frameHeight / 2) - deadZone), (255, 255, 0), 3)
     cv2.line(img, (0, int(frameHeight / 2) + deadZone), (frameWidth, int(frameHeight / 2) + deadZone), (255, 255, 0), 3)
-
-    if (cx < int(frameWidth / 2) - deadZone):
-        cv2.putText(img, " GO LEFT ", (20, 50), cv2.FONT_HERSHEY_COMPLEX, 1, (0, 0, 255), 3)
-        cv2.rectangle(img, (0, int(frameHeight / 2 - deadZone)),
-                      (int(frameWidth / 2) - deadZone, int(frameHeight / 2) + deadZone), (0, 0, 255), cv2.FILLED)
-        dir = 1
-    elif (cx > int(frameWidth / 2) + deadZone):
-        cv2.putText(img, " GO RIGHT ", (20, 50), cv2.FONT_HERSHEY_COMPLEX, 1, (0, 0, 255), 3)
-        cv2.rectangle(img, (int(frameWidth / 2 + deadZone), int(frameHeight / 2 - deadZone)),
-                      (frameWidth, int(frameHeight / 2) + deadZone), (0, 0, 255), cv2.FILLED)
-        dir = 2
-    elif (cy < int(frameHeight / 2) - deadZone):
-        cv2.putText(img, " GO UP ", (20, 50), cv2.FONT_HERSHEY_COMPLEX, 1, (0, 0, 255), 3)
-        cv2.rectangle(img, (int(frameWidth / 2 - deadZone), 0),
-                      (int(frameWidth / 2 + deadZone), int(frameHeight / 2) - deadZone), (0, 0, 255), cv2.FILLED)
-        dir = 3
-    elif (cy > int(frameHeight / 2) + deadZone):
-        cv2.putText(img, " GO DOWN ", (20, 50), cv2.FONT_HERSHEY_COMPLEX, 1, (0, 0, 255), 3)
-        cv2.rectangle(img, (int(frameWidth / 2 - deadZone), int(frameHeight / 2) + deadZone),
-                      (int(frameWidth / 2 + deadZone), frameHeight), (0, 0, 255), cv2.FILLED)
-        dir = 4
+    if cx != 0 or cy != 0:
+        if (cx < int(frameWidth / 2) - deadZone):
+            cv2.putText(img, " GO LEFT ", (20, 50), cv2.FONT_HERSHEY_COMPLEX, 1, (0, 0, 255), 3)
+            cv2.rectangle(img, (0, int(frameHeight / 2 - deadZone)),
+                          (int(frameWidth / 2) - deadZone, int(frameHeight / 2) + deadZone), (0, 0, 255), cv2.FILLED)
+            dir = 1
+        elif (cx > int(frameWidth / 2) + deadZone):
+            cv2.putText(img, " GO RIGHT ", (20, 50), cv2.FONT_HERSHEY_COMPLEX, 1, (0, 0, 255), 3)
+            cv2.rectangle(img, (int(frameWidth / 2 + deadZone), int(frameHeight / 2 - deadZone)),
+                          (frameWidth, int(frameHeight / 2) + deadZone), (0, 0, 255), cv2.FILLED)
+            dir = 2
+        elif (cy < int(frameHeight / 2) - deadZone):
+            cv2.putText(img, " GO UP ", (20, 50), cv2.FONT_HERSHEY_COMPLEX, 1, (0, 0, 255), 3)
+            cv2.rectangle(img, (int(frameWidth / 2 - deadZone), 0),
+                          (int(frameWidth / 2 + deadZone), int(frameHeight / 2) - deadZone), (0, 0, 255), cv2.FILLED)
+            dir = 3
+        elif (cy > int(frameHeight / 2) + deadZone):
+            cv2.putText(img, " GO DOWN ", (20, 50), cv2.FONT_HERSHEY_COMPLEX, 1, (0, 0, 255), 3)
+            cv2.rectangle(img, (int(frameWidth / 2 - deadZone), int(frameHeight / 2) + deadZone),
+                          (int(frameWidth / 2 + deadZone), frameHeight), (0, 0, 255), cv2.FILLED)
+            dir = 4
     return img, dir
 
 def dothething(myDrone):

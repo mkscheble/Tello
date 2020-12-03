@@ -36,6 +36,8 @@ while True:
     ## Step 2
     img, info = findFace(img)
     img, dir = getDirection(img, info, specs)
+    print('direction')
+    print(dir)
     ## Step 3
     pError, pError2, pError3 = trackFace(myDrone, info, w, pid, pid2, pid3, pError, pError2, pError3, dir)
     appendtoFile(myFile, myDrone.get_speed(), myDrone.get_flight_time())
