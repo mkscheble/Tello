@@ -1,7 +1,8 @@
 from djitellopy import Tello
 import cv2
 import numpy as np
-
+from time import sleep
+import time
 
 def initializeTello():
     myDrone = Tello()
@@ -14,6 +15,7 @@ def initializeTello():
     print(myDrone.get_battery())
     myDrone.streamoff()
     myDrone.streamon()
+    sleep(5)
     return myDrone
 
 

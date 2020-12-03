@@ -7,8 +7,10 @@ def writeFileHeader(dataFileName):
     fileout.write('  index,   time,    ref,ctrl_LR,ctrl_FB,ctrl_UD,ctrl_YA,  pitch,   roll,    yaw,    vgx,    vgy,    vgz,   templ,   temph,    tof,      h,    bat,   baro,   time,    agx,    agy,    agz\n\r')
     fileout.close()
 
-def appendtoFile(dataFileName, speed, time):
+def appendtoFile(dataFileName, dataQ):
     fileout = open(dataFileName, 'a')  # append
     print('writing data to file')
-    fileout.write(str([speed, time]) +'\n')
+    while not dataQ.empty():
+        telemdata = dataQ.get()
+        np.savetxt(fileout, [telemdata], fmt='%7.3f', delimiter=',')  # need to make telemdata a list
     fileout.close()
