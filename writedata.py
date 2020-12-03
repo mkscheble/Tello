@@ -5,5 +5,5 @@ def writeFileHeader(dataFileName):
 def appendtoFile(dataFileName, position):
     fileout = open(dataFileName, 'a')  # append
     print('writing data to file')
-    fileout.write('position: ' + str(position))
+    fileout.write('yaw: ' + str(position))
     fileout.close()

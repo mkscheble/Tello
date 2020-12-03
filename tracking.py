@@ -17,14 +17,14 @@ while True:
     if startCounter == 0:
         myDrone.takeoff()
         startCounter = 1
-
+    print('battery' + str(myDrone.get_battery()))
     ## Step 1
     img = telloGetFrame(myDrone, w, h)
     ## Step 2
     img, info = findFace(img)
     ## Step 3
     pError = trackFace(myDrone, info, w, pid, pError)
-    appendtoFile(myFile, myDrone.get_height())
+    appendtoFile(myFile, myDrone.get_yaw())
     
     # print(info[0][0])
 
