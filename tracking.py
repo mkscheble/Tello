@@ -34,17 +34,17 @@ while True:
     ## Step 1
     img = telloGetFrame(myDrone, w, h)
     ## Step 2
-    img, info = findFace(img)
-    img, dir = getDirection(img, info, specs)
+    # img, info = findFace(img)
+    # img, dir = getDirection(img, info, specs)
     img, frame_markers = findAruco(img)
     ## Step 3
     pError, pError2, pError3 = trackFace(myDrone, info, w, pid, pid2, pid3, pError, pError2, pError3, dir)
-    data = []
-    data.append(myDrone.get_speed())
-    data.append(myDrone.get_height())
-    data.append(myDrone.get_flight_time())
-    data.append(time.time())
-    dataQ.put(data)
+    # data = []
+    # data.append(myDrone.get_speed())
+    # data.append(myDrone.get_height())
+    # data.append(myDrone.get_flight_time())
+    # data.append(time.time())
+    # dataQ.put(data)
 
     cv2.imshow('Image', img)
     if cv2.waitKey(1) & 0xFF == ord('q'):
