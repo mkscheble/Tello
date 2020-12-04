@@ -54,13 +54,17 @@ def calibrate():
     cv2.waitKey(10)
     ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(objpoints, imgpoints, gray.shape[::-1],None,None)
     print(ret, mtx, dist, rvecs, tvecs)
-    fileout = open('calabration.txt', 'a')
+    fileout = open('calibration.txt','w')
+    print('open')
+    fileout.close()
+    fileout = open('calibration.txt', 'a')
     fileout.write('ret: ' + str(ret) + '\n')
     fileout.write('mtx: ' + str(mtx) + '\n')
     fileout.write('dist: ' + str(dist) + '\n')
     fileout.write('rvecs: ' + str(rvecs) + '\n')
     fileout.write('tvecs:' + str(tvecs) + '\n')
-
+    print('close')
+    fileout.close()
 calibrate()
     # #create a file to store data
     # from lxml import etree
