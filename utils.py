@@ -2,7 +2,6 @@ from djitellopy import Tello
 import cv2
 import numpy as np
 from time import sleep
-import time
 """ Using djitellopy api for easy access to functions"""
 
 def initializeTello():
@@ -156,46 +155,33 @@ def dothething(myDrone):
     myDrone.move_up(60)
     myDrone.move_right(60)
 
-def findAruco(img):
-    """Detects the aruco markers and returns a detected markers on image and the image."""
+# def findAruco(img):
+#     """Detects the aruco markers and returns a detected markers on image and the image."""
+#
+#     dictionary = cv2.aruco.Dictionary_get(cv2.aruco.DICT_6X6_250)
+#     parameters = cv2.aruco.DetectorParameters_create()
+#     # have to set frame to something
+#     markerCorners, markerIds, rejectedCandidates = cv2.aruco.detectMarkers(img, dictionary, parameters=parameters)
+#     frame_markers = cv2.aruco.drawDetectedMarkers(img, markerCorners, markerIds)
+#     return img, frame_markers
 
-    dictionary = cv2.aruco.Dictionary_get(cv2.aruco.DICT_6X6_250)
-    parameters = cv2.aruco.DetectorParameters_create()
-    # have to set frame to something
-    markerCorners, markerIds, rejectedCandidates = cv2.aruco.detectMarkers(img, dictionary, parameters=parameters)
-    frame_markers = cv2.aruco.drawDetectedMarkers(img, markerCorners, markerIds)
-    return img, frame_markers
 
+def findAruco(dictionary, img, parameters, mtx, dist):
+    """Detect aruco code and draw markers around it, Also draw orientation and give orientation axis"""
+    markerCorners, markerIDs, rejectedCandidates = cv2.aruco.detectMarkers(img, dictionary, parameters = parameters)
+    img = cv2.aruco.drawDetectedMarkers(img, markerCorners, markerIDs)
 
-def arucoAnalysis(arucoDict, frame, parameters, mtx, dist):
-    # Detect and draw the markers in the image
-    markerCorners, markerIDs, rejectedCandidates = cv2.aruco.detectMarkers(frame, arucoDict, parameters=parameters)
-    cv2.aruco.drawDetectedMarkers(frame, markerCorners, markerIDs)
-
-    # Detect marker pose
+    # Get poses, rvec = rotation vector, tvec = translation vector, 0.05 is marker width
     rvec, tvec, _ = cv2.aruco.estimatePoseSingleMarkers(markerCorners, 0.05, mtx, dist)
-    # print(rvec)
-    # Scaling up translation for ease of reading
-    try:
-        tvec = tvec*100
-    except:
-        x = 3;
 
     if np.all(markerIDs != None):
         for marker_idx in range(0,len(markerIDs)):
             # Draw rotation axes and display translation
-            cv2.aruco.drawAxis(frame, mtx, dist, rvec[marker_idx], tvec[marker_idx], 5)
+            img = cv2.aruco.drawAxis(img, mtx, dist, rvec[marker_idx], tvec[marker_idx], 5)
             font = cv2.FONT_HERSHEY_SIMPLEX
             text = str([round(pos,2) for pos in tvec[marker_idx][0]])
             position = tuple(markerCorners[marker_idx][0][0])
-            cv2.putText(frame, text, position, font, 0.4, (255, 255, 255), 1, cv2.LINE_AA)
+            cv2.putText(img, text, position, font, 0.4, (255, 255, 255), 1, cv2.LINE_AA)
 
-            # Record data
-    #         textRecorder.write(str([rvec[marker_idx][0].tolist(), tvec[marker_idx][0].tolist(), markerIDs[marker_idx][0]]))
-    #         if marker_idx < len(markerIDs)-1:
-    #             textRecorder.write(',')
-    # else:
-    #         textRecorder.write(str([rvec, tvec]))
-    # textRecorder.write("\n")
 
-    return frame, markerIDs, rvec, tvec
+    return img, [markerCorners, markerIDs], [rvec, tvec], position
