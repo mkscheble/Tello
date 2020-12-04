@@ -140,3 +140,9 @@ def findAruco(img):
     frame_markers = cv2.aruco.drawDetectedMarkers(img, markerCorners, markerIds)
     return img, frame_markers
 
+def readCalibration(file):
+    f = open(file, "r")
+    ff = [i for i in f.readlines()]
+    f.close()
+    calibration_data = eval(''.join(ff))
+    return calibration_data
