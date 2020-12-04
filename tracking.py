@@ -55,7 +55,7 @@ while True:
     img, info = findFace(img)
     img, dir = getDirection(img, info, specs)
     img, markers, twist, position = findAruco(arucoDict, img, parameters, mtx, dist)
-    print(twist)
+    # print(twist)
     # Step 3 - Control, This is where we apply the error from where we want to be
     pError, pError2, pError3 = trackFace(myDrone, info, w, pid, pid2, pid3, pError, pError2, pError3, dir)
 
