@@ -32,7 +32,7 @@ def findFace(img):
     """ Tracking face image, using cascade, how I originally set up the tracking but switched it to aruco codes
     left in just in case we need it"""
 
-    faceCascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
+    faceCascade = cv2.CascadeClassifier('images/haarcascade_frontalface_default.xml')
     imgGray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     faces = faceCascade.detectMultiScale(imgGray, 1.1, 6)
 
