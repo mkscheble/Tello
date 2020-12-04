@@ -19,3 +19,5 @@ markerCorners, markerIds, rejectedCandidates = cv2.aruco.detectMarkers(img, dict
 
 
 
+
+
