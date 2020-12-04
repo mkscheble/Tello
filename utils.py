@@ -170,7 +170,7 @@ def findAruco(dictionary, img, parameters, mtx, dist):
     """Detect aruco code and draw markers around it, Also draw orientation and give orientation axis"""
     markerCorners, markerIDs, rejectedCandidates = cv2.aruco.detectMarkers(img, dictionary, parameters = parameters)
     img = cv2.aruco.drawDetectedMarkers(img, markerCorners, markerIDs)
-
+    position = 0
     # Get poses, rvec = rotation vector, tvec = translation vector, 0.05 is marker width
     rvec, tvec, _ = cv2.aruco.estimatePoseSingleMarkers(markerCorners, 0.05, mtx, dist)
 
