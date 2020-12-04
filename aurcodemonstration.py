@@ -8,13 +8,18 @@ import numpy as np
 # cv2.imwrite("marker33.png", markerImage)
 img = cv2.imread('marker33.png')
 # cv2.imshow("marker", img)
-# cv2.waitKey(0)
+
 ##detecting markers
 
 dictionary = cv2.aruco.Dictionary_get(cv2.aruco.DICT_6X6_250)
 parameters = cv2.aruco.DetectorParameters_create()
 #have to set frame to something
 markerCorners, markerIds, rejectedCandidates = cv2.aruco.detectMarkers(img, dictionary, parameters = parameters)
+frame_markers = cv2.aruco.drawDetectedMarkers(img.copy(), markerCorners, markerIds)
+print(markerIds)
+cv2.imshow('markers', frame_markers)
+cv2.waitKey()
+
 
 
 
