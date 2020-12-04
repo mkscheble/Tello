@@ -26,10 +26,10 @@ data = []
 """constants for aruco analysis, found from camera calibration done seperately, mtx is camera matrix"""
 arucoDict = cv2.aruco.Dictionary_get(cv2.aruco.DICT_6X6_250)
 parameters = cv2.aruco.DetectorParameters_create()
-mtx = np.float32([[606.42428705, 0.0,320.3971664],
- [0, 607.16835468, 219.84335448],
- [0., 0., 1.]])
-dist = np.float32([[-0.00895433, -0.12056427, -0.00618839, 0.00344274, 0.4009607]])
+mtx = np.float32([[620.52798302, 0.0, 294.40771497],
+                  [0.0, 621.57625105, 268.77465391],
+                  [0.0, 0.0, 1.0]])
+dist = np.float32([[0.0237036, -0.13064133, 0.01268512, -0.00664866, 0.27907396]])
 
 # initialize tello drone
 myDrone = initializeTello()
