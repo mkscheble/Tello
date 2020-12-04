@@ -130,3 +130,13 @@ def dothething(myDrone):
     myDrone.move_up(60)
     myDrone.move_right(60)
 
+def findAruco(img):
+    ##detecting markers
+
+    dictionary = cv2.aruco.Dictionary_get(cv2.aruco.DICT_6X6_250)
+    parameters = cv2.aruco.DetectorParameters_create()
+    # have to set frame to something
+    markerCorners, markerIds, rejectedCandidates = cv2.aruco.detectMarkers(img, dictionary, parameters=parameters)
+    frame_markers = cv2.aruco.drawDetectedMarkers(img, markerCorners, markerIds)
+    return img, frame_markers
+
