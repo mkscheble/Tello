@@ -19,10 +19,18 @@ specs = [w, h, deadZone]
 dir = 0
 data = []
 
+#constants for aruco analysis
+arucoDict = cv2.aruco.Dictionary_get(cv2.aruco.DICT_6X6_250)
+parameters = cv2.aruco.DetectorParameters_create()
+mtx = np.float32([[606.42428705, 0.0,320.3971664],
+ [0, 607.16835468, 219.84335448],
+ [0., 0., 1.]])
+dist = np.float32([[-0.00895433, -0.12056427, -0.00618839, 0.00344274, 0.4009607]])
 
 myDrone = initializeTello()
-myFile = 'thisone'
+myFile = 'datacollection'
 writeFileHeader(myFile)
+
 
 while True:
 
@@ -37,8 +45,9 @@ while True:
     # img, info = findFace(img)
     # img, dir = getDirection(img, info, specs)
     img, frame_markers = findAruco(img)
+    frame, markerIDs, rvec, tvec = arucoAnalysis(arucoDict, img, parameters, mtx, dist)
     ## Step 3
-    pError, pError2, pError3 = trackFace(myDrone, info, w, pid, pid2, pid3, pError, pError2, pError3, dir)
+    # pError, pError2, pError3 = trackFace(myDrone, info, w, pid, pid2, pid3, pError, pError2, pError3, dir)
     # data = []
     # data.append(myDrone.get_speed())
     # data.append(myDrone.get_height())

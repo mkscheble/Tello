@@ -140,9 +140,36 @@ def findAruco(img):
     frame_markers = cv2.aruco.drawDetectedMarkers(img, markerCorners, markerIds)
     return img, frame_markers
 
-def readCalibration(file):
-    f = open(file, "r")
-    ff = [i for i in f.readlines()]
-    f.close()
-    calibration_data = eval(''.join(ff))
-    return calibration_data
+
+def arucoAnalysis(arucoDict, frame, parameters, mtx, dist):
+    # Detect and draw the markers in the image
+    markerCorners, markerIDs, rejectedCandidates = cv2.aruco.detectMarkers(frame, arucoDict, parameters=parameters)
+    cv2.aruco.drawDetectedMarkers(frame, markerCorners, markerIDs)
+
+    # Detect marker pose
+    rvec, tvec, _ = cv2.aruco.estimatePoseSingleMarkers(markerCorners, 0.05, mtx, dist)
+    print(rvec)
+    # Scaling up translation for ease of reading
+    try:
+        tvec = tvec*100
+    except:
+        x = 3;
+
+    if np.all(markerIDs != None):
+        for marker_idx in range(0,len(markerIDs)):
+            # Draw rotation axes and display translation
+            cv2.aruco.drawAxis(frame, mtx, dist, rvec[marker_idx], tvec[marker_idx], 5)
+            font = cv2.FONT_HERSHEY_SIMPLEX
+            text = str([round(pos,2) for pos in tvec[marker_idx][0]])
+            position = tuple(markerCorners[marker_idx][0][0])
+            cv2.putText(frame, text, position, font, 0.4, (255, 255, 255), 1, cv2.LINE_AA)
+
+            # Record data
+    #         textRecorder.write(str([rvec[marker_idx][0].tolist(), tvec[marker_idx][0].tolist(), markerIDs[marker_idx][0]]))
+    #         if marker_idx < len(markerIDs)-1:
+    #             textRecorder.write(',')
+    # else:
+    #         textRecorder.write(str([rvec, tvec]))
+    # textRecorder.write("\n")
+
+    return frame, markerIDs, rvec, tvec
