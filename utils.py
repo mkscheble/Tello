@@ -3,8 +3,10 @@ import cv2
 import numpy as np
 from time import sleep
 import time
+""" Using djitellopy api for easy access to functions"""
 
 def initializeTello():
+    """connect to Tello, set velocities equal to zero, turn stream on"""
     myDrone = Tello()
     myDrone.connect()
     myDrone.for_back_velocity = 0
@@ -20,6 +22,7 @@ def initializeTello():
 
 
 def telloGetFrame(myDrone, w=360, h=240):
+    """Get specific frames, and resize"""
     myFrame = myDrone.get_frame_read()
     myFrame = myFrame.frame
     img = cv2.resize(myFrame, (w, h))
@@ -27,14 +30,20 @@ def telloGetFrame(myDrone, w=360, h=240):
 
 
 def findFace(img):
+    """ Tracking face image, using cascade, how I originally set up the tracking but switched it to aruco codes
+    left in just in case we need it"""
+
     faceCascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
     imgGray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     faces = faceCascade.detectMultiScale(imgGray, 1.1, 6)
 
+    # arrays of faces detected/area of each face
     myFaceListC = []
     myFaceListArea = []
 
     for (x, y, w, h) in faces:
+
+        # create rectangle around detected faces
         cv2.rectangle(img, (x, y), (x + w, y + h), (0, 0, 255), 2)
         cx = x + w // 2
         cy = y + h // 2
@@ -43,14 +52,17 @@ def findFace(img):
         myFaceListC.append([cx, cy])
 
     if len(myFaceListArea) != 0:
+        # choosing largest face from detected faces
         i = myFaceListArea.index(max(myFaceListArea))
         return img, [myFaceListC[i], myFaceListArea[i]]
     else:
+        #if no faces detected just return images with zero info
         return img, [[0, 0], 0]
 
 
 def trackFace(myDrone, info, w, pid, pid2, pid3, pError, pError2, pError3, dir):
-    ## PID
+    """PID controller implemented for moving forward, yaw_axis, and left right velocity
+    To Do: need to implement up and down and I think we can use direction for that"""
     error = info[0][0] - w // 2
     speed = pid[0] * error + pid[1] * (error - pError)
     speed = int(np.clip(speed, -100, 100))
@@ -67,6 +79,7 @@ def trackFace(myDrone, info, w, pid, pid2, pid3, pError, pError2, pError3, dir):
     speed3 = pid3[0] * error3 + pid3[1] * (error3 - pError3)
     speed3 = int(np.clip(speed3, -100, 100))
 
+    # This code is written for face detection, which is the info, need to change for aruco tags
     if info[0][0] != 0:
         myDrone.yaw_velocity = speed3
         myDrone.left_right_velocity = speed
@@ -89,16 +102,23 @@ def trackFace(myDrone, info, w, pid, pid2, pid3, pError, pError2, pError3, dir):
                                 myDrone.for_back_velocity,
                                 myDrone.up_down_velocity,
                                 myDrone.yaw_velocity)
+    # return errors for previous errors and PID controller
     return error, error2, error3
 
 
 def getDirection(img, info, specs):
+    """This function gets the direction the drone needs to travel to center the current tracking item: right now face, will be aruco tag
+    dir: 1 LEFT
+    dir: 2 RIGHT
+    dir: 3 UP
+    dir: 4 DOWN"""
     cx = info[0][0]
     cy = info[0][1]
     frameWidth = specs[0]
     frameHeight = specs[1]
     deadZone = specs[2]
     dir = 0
+    # Uncomment this is want to see grids on camera image, kinda gross to look at though
     # cv2.line(img, (int(frameWidth / 2) - deadZone, 0), (int(frameWidth / 2) - deadZone, frameHeight), (255, 255, 0), 3)
     # cv2.line(img, (int(frameWidth / 2) + deadZone, 0), (int(frameWidth / 2) + deadZone, frameHeight), (255, 255, 0), 3)
     # cv2.line(img, (0, int(frameHeight / 2) - deadZone), (frameWidth, int(frameHeight / 2) - deadZone), (255, 255, 0), 3)
@@ -106,32 +126,38 @@ def getDirection(img, info, specs):
     if cx != 0 or cy != 0:
         if (cx < int(frameWidth / 2) - deadZone):
             cv2.putText(img, " GO LEFT ", (20, 50), cv2.FONT_HERSHEY_COMPLEX, 1, (0, 0, 255), 3)
+            # Uncomment this code to see grid filled, kinda gross
             # cv2.rectangle(img, (0, int(frameHeight / 2 - deadZone)),
             #               (int(frameWidth / 2) - deadZone, int(frameHeight / 2) + deadZone), (0, 0, 255), cv2.FILLED)
             dir = 1
         elif (cx > int(frameWidth / 2) + deadZone):
             cv2.putText(img, " GO RIGHT ", (20, 50), cv2.FONT_HERSHEY_COMPLEX, 1, (0, 0, 255), 3)
+            # Uncomment this code to see grid filled, kinda gross
             # cv2.rectangle(img, (int(frameWidth / 2 + deadZone), int(frameHeight / 2 - deadZone)),
             #               (frameWidth, int(frameHeight / 2) + deadZone), (0, 0, 255), cv2.FILLED)
             dir = 2
         elif (cy < int(frameHeight / 2) - deadZone):
             cv2.putText(img, " GO UP ", (20, 50), cv2.FONT_HERSHEY_COMPLEX, 1, (0, 0, 255), 3)
+            # Uncomment this code to see grid filled, kinda gross
             # cv2.rectangle(img, (int(frameWidth / 2 - deadZone), 0),
             #               (int(frameWidth / 2 + deadZone), int(frameHeight / 2) - deadZone), (0, 0, 255), cv2.FILLED)
             dir = 3
         elif (cy > int(frameHeight / 2) + deadZone):
             cv2.putText(img, " GO DOWN ", (20, 50), cv2.FONT_HERSHEY_COMPLEX, 1, (0, 0, 255), 3)
+            # Uncomment this code to see grid filled, kinda gross
             # cv2.rectangle(img, (int(frameWidth / 2 - deadZone), int(frameHeight / 2) + deadZone),
             #               (int(frameWidth / 2 + deadZone), frameHeight), (0, 0, 255), cv2.FILLED)
             dir = 4
     return img, dir
 
 def dothething(myDrone):
+    """This function will be the given command when we center our drone and have it the correct distance from the drone.
+     Ultimately, this will be used to draw on the whiteboard."""
     myDrone.move_up(60)
     myDrone.move_right(60)
 
 def findAruco(img):
-    ##detecting markers
+    """Detects the aruco markers and returns a detected markers on image and the image."""
 
     dictionary = cv2.aruco.Dictionary_get(cv2.aruco.DICT_6X6_250)
     parameters = cv2.aruco.DetectorParameters_create()
