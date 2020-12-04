@@ -61,12 +61,12 @@ while True:
 
 
     # Write data to queue
-    # data = []
-    # data.append(myDrone.get_speed())
-    # data.append(myDrone.get_height())
-    # data.append(myDrone.get_flight_time())
-    # data.append(time.time())
-    # dataQ.put(data)
+    data = []
+    data.append(myDrone.get_speed())
+    data.append(myDrone.get_height())
+    data.append(myDrone.get_flight_time())
+    data.append(time.time())
+    dataQ.put(data)
 
 
     # show the image, which is just the camera feed
@@ -76,6 +76,6 @@ while True:
     if cv2.waitKey(5) & 0xFF == ord('q'):
         myDrone.land()
         # take data queue that we've been appending to and write to file
-        # appendtoFile(myFile, dataQ)
+        appendtoFile(myFile, dataQ)
         cv2.destroyAllWindows()
         break
