@@ -8,13 +8,13 @@ dataQ = Queue()
 # w, h = 360, 240
 w, h = 640, 480
 deadZone = 100
-pid = [0.01, 0.01, 0]
-pid2 = [0.01, 0.01, 0]
+pid = [0.001, 0.001, 0]
+pid2 = [0.001, 0.001, 0]
 pid3 = [0.001, 0.001, 0]
 pError = 0
 pError2 = 0
 pError3 = 0
-startCounter = 1  # for no Flight 1   - for flight 0
+startCounter = 0  # for no Flight 1   - for flight 0
 specs = [w, h, deadZone]
 dir = 0
 data = []
@@ -42,12 +42,12 @@ while True:
     ## Step 1
     img = telloGetFrame(myDrone, w, h)
     ## Step 2
-    # img, info = findFace(img)
-    # img, dir = getDirection(img, info, specs)
+    img, info = findFace(img)
+    img, dir = getDirection(img, info, specs)
     img, frame_markers = findAruco(img)
     frame, markerIDs, rvec, tvec = arucoAnalysis(arucoDict, img, parameters, mtx, dist)
     ## Step 3
-    # pError, pError2, pError3 = trackFace(myDrone, info, w, pid, pid2, pid3, pError, pError2, pError3, dir)
+    pError, pError2, pError3 = trackFace(myDrone, info, w, pid, pid2, pid3, pError, pError2, pError3, dir)
     # data = []
     # data.append(myDrone.get_speed())
     # data.append(myDrone.get_height())
@@ -56,8 +56,8 @@ while True:
     # dataQ.put(data)
 
     cv2.imshow('Image', img)
-    if cv2.waitKey(1) & 0xFF == ord('q'):
+    if cv2.waitKey(5) & 0xFF == ord('q'):
         myDrone.land()
-        appendtoFile(myFile, dataQ)
+        # appendtoFile(myFile, dataQ)
         cv2.destroyAllWindows()
         break

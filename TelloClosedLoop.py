@@ -39,7 +39,7 @@ CmdSock.bind(local_address)
 local_port = 8890
 StateSock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)  # socket for sending cmd
 StateSock.bind(('', local_port))
-CmdSock.sendto('command'.encode('utf-8'), tello_address)   # command port on Tello
+CmdSock.sendto('command'.encode('utf-8'), tello_address)  # command port on Tello
     
 def writeFileHeader(dataFileName):
     fileout = open(dataFileName,'w')

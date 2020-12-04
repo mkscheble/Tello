@@ -148,7 +148,7 @@ def arucoAnalysis(arucoDict, frame, parameters, mtx, dist):
 
     # Detect marker pose
     rvec, tvec, _ = cv2.aruco.estimatePoseSingleMarkers(markerCorners, 0.05, mtx, dist)
-    print(rvec)
+    # print(rvec)
     # Scaling up translation for ease of reading
     try:
         tvec = tvec*100
