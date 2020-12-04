@@ -29,11 +29,14 @@ myDrone = initializeTello()
 w, h = 640, 480
 arucoDict = cv2.aruco.Dictionary_get(cv2.aruco.DICT_6X6_250)
 parameters = cv2.aruco.DetectorParameters_create()
-mtx = [[606.42428705, 0.0,320.3971664 ],
+mtx = [[606.42428705, 0.0,320.3971664],
  [0, 607.16835468, 219.84335448],
  [0., 0., 1.]]
 dist = [[-0.00895433, -0.12056427, -0.00618839, 0.00344274, 0.4009607]]
 
+mtx = np.float32(mtx)
+dist = np.float32(dist)
+print(mtx)
 
 
 while True:
@@ -51,7 +54,7 @@ while True:
         break
 
 
-
-
-
-
+#
+#
+#
+#
