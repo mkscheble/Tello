@@ -202,13 +202,14 @@ def trackAruco(myDrone, twist, pid, pid2, pid3, pError, pError2, pError3):
             speed = int(np.clip(speed, -30,30))
 
             # error2 = twist[1][0][0][1]
-            # speed2 = pid3[0] * error3 + pid3[1] * (error3 - pError3)
-            # speed2 = int(np.clip(speed3, -10, 10))
+            # speed2 = pid3[0] * error2 + pid3[1] * (error2 - pError3)
+            # speed2 = int(np.clip(speed2, -10, 10))
+
             # # PID for forwards backwards
             # error3 = twist[1][0][0][2]
             # speed3 = pid2[0] * error2 + pid2[1] * (error2 - pError2)
             # speed3 = int(np.clip(speed2, -10, 10))
-            #
+
             speed2 = 0
             # error = 0
             speed3 = 0
