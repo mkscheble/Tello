@@ -205,6 +205,9 @@ def trackAruco(myDrone, twist, pid, pid2, pid3, pError, pError2, pError3):
     speed3 = pid3[0] * error3 + pid3[1] * (error3 - pError3)
     speed3 = int(np.clip(speed3, -100, 100))
 
+    print("speed", speed)
+    print("speed2", speed2)
+    print("speed3", speed3)
     # Sends RC command based on distance of translation vector
     if np.all(twist[1]) != 0:
         myDrone.left_right_velocity = speed
