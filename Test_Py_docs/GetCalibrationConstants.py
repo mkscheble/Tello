@@ -66,7 +66,7 @@ def calibrate():
     fileout.write('tvecs:' + str(tvecs) + '\n')
     print('close')
     fileout.close()
-# calibrate()
+calibrate()
 
 
 # objp = np.zeros((7*9,3), np.float32)
