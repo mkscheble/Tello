@@ -13,7 +13,8 @@ def calibrate():
     # prepare object points, like (0,0,0), (1,0,0), (2,0,0) ....,(6,5,0)
     # checkerboard of size (9 x 7) is used
     objp = np.zeros((7*9,3), np.float32)
-    objp[:,:2] = np.mgrid[0:9,0:7].T.reshape(-1,2)
+    #adding the 1.8669 gives us our translation vectiors in centimeters
+    objp[:,:2] = np.mgrid[0:9,0:7].T.reshape(-1,2) * 1.8669
 
     # arrays to store object points and image points from all the images.
     objpoints = [] # 3d point in real world space
@@ -65,4 +66,9 @@ def calibrate():
     fileout.write('tvecs:' + str(tvecs) + '\n')
     print('close')
     fileout.close()
-calibrate()
+# calibrate()
+
+
+# objp = np.zeros((7*9,3), np.float32)
+# objp[:,:2] = np.mgrid[0:9,0:7].T.reshape(-1,2) *1.8669
+# print(objp)
