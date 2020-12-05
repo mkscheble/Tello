@@ -18,7 +18,7 @@ pid3 = [0.01, 0.01, 0]
 pError = 0
 pError2 = 0
 pError3 = 0
-startCounter = 1  # 1 - No Flight, 0 Flight
+startCounter = 0  # 1 - No Flight, 0 Flight
 specs = [w, h, deadZone]
 dir = 0
 data = []
@@ -53,15 +53,18 @@ while True:
     # Step 2 - Track what is in frame
     """In our case we are using an aruco code"""
     # tracking face image
-    # img, info = findFace(img)
     # img, dir = getDirection(img, info, specs)
 
     #trackinng aruco tag
     img, markers, twist, position = findAruco(arucoDict, img, parameters, mtx, dist)
+
+
     # Step 3 - Control, This is where we apply the error from where we want to be
     # pError, pError2, pError3 = trackFace(myDrone, info, w, pid, pid2, pid3, pError, pError2, pError3, dir)
     pError, pError2, pError3, speed, speed2, speed3 = trackAruco(myDrone, twist, pid, pid2, pid3, pError, pError2, pError3)
 
+    # show the image, which is just the camera feed
+    cv2.imshow('Camera Feed Tello', img)
     # Write data to queue
     data = []
     data.append(myDrone.get_speed())
@@ -73,9 +76,6 @@ while True:
     data.append(speed3)
     dataQ.put(data)
 
-
-    # show the image, which is just the camera feed
-    cv2.imshow('Camera Feed Tello', img)
 
     # Hold Q for 5 seconds and then the drone will land, need to be in image feed
     if cv2.waitKey(5) & 0xFF == ord('q'):
