@@ -29,13 +29,10 @@ from utils import *
 w, h = 640, 480
 arucoDict = cv2.aruco.Dictionary_get(cv2.aruco.DICT_6X6_250)
 parameters = cv2.aruco.DetectorParameters_create()
-mtx = [[606.42428705, 0.0,320.3971664],
- [0, 607.16835468, 219.84335448],
- [0., 0., 1.]]
-dist = [[-0.00895433, -0.12056427, -0.00618839, 0.00344274, 0.4009607]]
-
-mtx = np.float32(mtx)
-dist = np.float32(dist)
+mtx = np.float32([[616.86563666, 0., 321.92615976],
+                  [0., 615.33126089, 236.21885561],
+                  [0., 0., 1.]])
+dist = np.float32([[-0.00803506, 0.00767694, -0.0028638, 0.00770982, 0.10991234]])
 
 img = cv2.imread(r'C:\Users\ad\Desktop\Tello\images\IMG_1597.jpg')
 img = cv2.resize(img, (640, 480))
