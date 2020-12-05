@@ -185,3 +185,50 @@ def findAruco(dictionary, img, parameters, mtx, dist):
 
 
     return img, [markerCorners, markerIDs], [rvec, tvec], position
+
+def trackAruco(myDrone, info, w, pid, pid2, pid3, pError, pError2, pError3, dir):
+    """PID controller implemented for moving forward, yaw_axis, and left right velocity
+    To Do: need to implement up and down and I think we can use direction for that"""
+
+    #PID for lef_right_forwards backwards
+    error = info[0][0] - w // 2
+    speed = pid[0] * error + pid[1] * (error - pError)
+    speed = int(np.clip(speed, -100, 100))
+    # print(speed)
+    # print('area: ' + str(info[1]) + "\n")
+
+    #PID for forwards backwards
+    error2 = info[1] - 10000
+    speed2 = pid2[0] * error2 + pid2[1] * (error2 - pError2)
+    speed2 = int(np.clip(speed2, -100, 100))
+
+    # PID for yaw angle, slower than left right movement
+    error3 = info[1] - 10000
+    speed3 = pid3[0] * error3 + pid3[1] * (error3 - pError3)
+    speed3 = int(np.clip(speed3, -100, 100))
+
+    # This code is written for face detection, which is the info, need to change for aruco tags
+    if info[0][0] != 0:
+        myDrone.yaw_velocity = speed3
+        myDrone.left_right_velocity = speed
+        print(speed)
+        if info[1] != 0:
+            if speed2 < 0:
+                myDrone.move_forward = speed2
+            else:
+                myDrone.move_back = speed2
+            # print('s' + str(speed2) + '\n')
+            # print('e' + str(error2)+ '\n')
+    else:
+        myDrone.for_back_velocity = 0
+        myDrone.left_right_velocity = 0
+        myDrone.up_down_velocity = 0
+        myDrone.yaw_velocity = 0
+        error = 0
+    if myDrone.send_rc_control:
+        myDrone.send_rc_control(myDrone.left_right_velocity,
+                                myDrone.for_back_velocity,
+                                myDrone.up_down_velocity,
+                                myDrone.yaw_velocity)
+    # return errors for previous errors and PID controller
+    return error, error2, error3
