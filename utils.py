@@ -185,3 +185,4 @@ def findAruco(dictionary, img, parameters, mtx, dist):
 
 
     return img, [markerCorners, markerIDs], [rvec, tvec], position
+

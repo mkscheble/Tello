@@ -25,7 +25,7 @@ import numpy as np
 from visionProcessing import *
 from utils import *
 
-myDrone = initializeTello()
+# myDrone = initializeTello()
 w, h = 640, 480
 arucoDict = cv2.aruco.Dictionary_get(cv2.aruco.DICT_6X6_250)
 parameters = cv2.aruco.DetectorParameters_create()
@@ -36,23 +36,18 @@ dist = [[-0.00895433, -0.12056427, -0.00618839, 0.00344274, 0.4009607]]
 
 mtx = np.float32(mtx)
 dist = np.float32(dist)
-print(mtx)
 
-
-while True:
-
-    img = telloGetFrame(myDrone, w, h)
-    img, frame_markers = findAruco(img)
-
-    frame, markerIDs, rvec, tvec = arucoAnalysis(arucoDict, img, parameters, mtx, dist)
-    cv2.imshow('Image', frame)
-
-    if cv2.waitKey(1) & 0xFF == ord('q'):
-        # myDrone.land()
-        # appendtoFile(myFile, dataQ)
-        cv2.destroyAllWindows()
-        break
-
+img = cv2.imread(r'C:\Users\ad\Desktop\Tello\images\IMG_1597.jpg')
+img = cv2.resize(img, (640, 480))
+img, markers, twist, position = findAruco(arucoDict, img, parameters, mtx, dist)
+print('markercorners',markers[0], '\n')
+print('markerID',markers[1], '\n')
+print('rvec',twist[0], '\n')
+print('tvec',twist[1], '\n')
+print('position',position, '\n')
+#tvec is going to be in centimeters
+cv2.imshow('imag', img)
+cv2.waitKey()
 
 #
 #
