@@ -10,9 +10,9 @@ dataQ = Queue()
 w, h = 640, 480
 deadZone = 100
 """pid controls left_right velocity, pid2 controls moving forward, pid3 controls yaw velocity"""
-pid = [0.001, 0.001, 0]
-pid2 = [0.001, 0.001, 0]
-pid3 = [0.001, 0.001, 0]
+pid = [0.01, 0.01, 0]
+pid2 = [0.01, 0.01, 0]
+pid3 = [0.01, 0.01, 0]
 
 # pError stands for previous error, used for PID controller
 pError = 0
@@ -52,13 +52,15 @@ while True:
 
     # Step 2 - Track what is in frame
     """In our case we are using an aruco code"""
-    img, info = findFace(img)
-    img, dir = getDirection(img, info, specs)
-    img, markers, twist, position = findAruco(arucoDict, img, parameters, mtx, dist)
-    # print(twist)
-    # Step 3 - Control, This is where we apply the error from where we want to be
-    pError, pError2, pError3 = trackFace(myDrone, info, w, pid, pid2, pid3, pError, pError2, pError3, dir)
+    # tracking face image
+    # img, info = findFace(img)
+    # img, dir = getDirection(img, info, specs)
 
+    #trackinng aruco tag
+    img, markers, twist, position = findAruco(arucoDict, img, parameters, mtx, dist)
+    # Step 3 - Control, This is where we apply the error from where we want to be
+    # pError, pError2, pError3 = trackFace(myDrone, info, w, pid, pid2, pid3, pError, pError2, pError3, dir)
+    pError, pError2, pError3, speed, speed2, speed3 = trackAruco(myDrone, twist, pid, pid2, pid3, pError, pError2, pError3)
 
     # Write data to queue
     data = []
@@ -66,6 +68,9 @@ while True:
     data.append(myDrone.get_height())
     data.append(myDrone.get_flight_time())
     data.append(time.time())
+    data.append(speed)
+    data.append(speed2)
+    data.append(speed3)
     dataQ.put(data)
 
 
