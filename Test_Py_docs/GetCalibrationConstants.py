@@ -68,7 +68,6 @@ def calibrate():
     fileout.close()
 calibrate()
 
-
 # objp = np.zeros((7*9,3), np.float32)
 # objp[:,:2] = np.mgrid[0:9,0:7].T.reshape(-1,2) *1.8669
 # print(objp)
