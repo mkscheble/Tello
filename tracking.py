@@ -10,9 +10,9 @@ dataQ = Queue()
 w, h = 640, 480
 deadZone = 100
 """pid controls left_right velocity, pid2 controls moving forward, pid3 controls yaw velocity"""
-# if you have value over 120, seems to buffer the frames and drone drifts off
-pid = [120.0, 0.0, 0]
-pid2 = [10.01, 10.01, 0]
+# if you have value over 120, image seems to buffer the frames and drone drifts off
+pid = [120.0, 1.0, 0]
+pid2 = [120.0, 10.01, 0]
 pid3 = [10.01,10.01, 0]
 
 # pError stands for previous error, used for PID controller
