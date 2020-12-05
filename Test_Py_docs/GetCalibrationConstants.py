@@ -14,7 +14,7 @@ def calibrate():
     # checkerboard of size (9 x 7) is used
     objp = np.zeros((7*9,3), np.float32)
     #adding the 1.8669 gives us our translation vectiors in centimeters
-    objp[:,:2] = np.mgrid[0:9,0:7].T.reshape(-1,2) * 1.8669
+    objp[:,:2] = np.mgrid[0:9,0:7].T.reshape(-1,2) * 0.018669
 
     # arrays to store object points and image points from all the images.
     objpoints = [] # 3d point in real world space
@@ -40,7 +40,7 @@ def calibrate():
             count = count + 1
             # Draw and display the corners
             cv2.drawChessboardCorners(frame, (9,7), corners, ret)
-            sleep(2)
+            sleep(.5)
             # print('found')
             #write_name = 'corners_found'+str(idx)+'.jpg'
 
