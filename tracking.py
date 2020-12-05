@@ -10,9 +10,9 @@ dataQ = Queue()
 w, h = 640, 480
 deadZone = 100
 """pid controls left_right velocity, pid2 controls moving forward, pid3 controls yaw velocity"""
-pid = [0.01, 0.01, 0]
-pid2 = [0.01, 0.01, 0]
-pid3 = [0.01, 0.01, 0]
+pid = [100.0, 0.0, 0]
+pid2 = [10.01, 10.01, 0]
+pid3 = [10.01,10.01, 0]
 
 # pError stands for previous error, used for PID controller
 pError = 0
@@ -22,6 +22,7 @@ startCounter = 0  # 1 - No Flight, 0 Flight
 specs = [w, h, deadZone]
 dir = 0
 data = []
+sped = []
 
 """constants for aruco analysis, found from camera calibration done seperately, mtx is camera matrix"""
 arucoDict = cv2.aruco.Dictionary_get(cv2.aruco.DICT_6X6_250)
@@ -39,6 +40,13 @@ myFile = 'datacollection'
 # create file
 writeFileHeader(myFile)
 
+# calls to velocity command, breaks if call it too much
+count = 0
+speed = 0
+speed2 = 0
+speed3 = 0
+
+
 
 while True:
 
@@ -54,28 +62,32 @@ while True:
     """In our case we are using an aruco code"""
     # tracking face image
     # img, dir = getDirection(img, info, specs)
+    # pError, pError2, pError3 = trackFace(myDrone, info, w, pid, pid2, pid3, pError, pError2, pError3, dir)
 
     #trackinng aruco tag
     img, markers, twist, position = findAruco(arucoDict, img, parameters, mtx, dist)
 
-
     # Step 3 - Control, This is where we apply the error from where we want to be
-    # pError, pError2, pError3 = trackFace(myDrone, info, w, pid, pid2, pid3, pError, pError2, pError3, dir)
+    # if count == 5:
     pError, pError2, pError3, speed, speed2, speed3 = trackAruco(myDrone, twist, pid, pid2, pid3, pError, pError2, pError3)
+    sped.append(speed)
+    #     count = 0
+    # count = count + 1
+
+
+    # Write data to queue
+    # data = []
+    # data.append(myDrone.get_speed())
+    # data.append(myDrone.get_height())
+    # data.append(myDrone.get_flight_time())
+    # data.append(time.time())
+    # data.append(speed)
+    # data.append(speed2)
+    # data.append(speed3)
+    # dataQ.put(data)
 
     # show the image, which is just the camera feed
     cv2.imshow('Camera Feed Tello', img)
-    # Write data to queue
-    data = []
-    data.append(myDrone.get_speed())
-    data.append(myDrone.get_height())
-    data.append(myDrone.get_flight_time())
-    data.append(time.time())
-    data.append(speed)
-    data.append(speed2)
-    data.append(speed3)
-    dataQ.put(data)
-
 
     # Hold Q for 5 seconds and then the drone will land, need to be in image feed
     if cv2.waitKey(5) & 0xFF == ord('q'):
@@ -83,4 +95,5 @@ while True:
         # take data queue that we've been appending to and write to file
         appendtoFile(myFile, dataQ)
         cv2.destroyAllWindows()
+        print(sped)
         break
