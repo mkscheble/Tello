@@ -44,11 +44,13 @@ myFile = 'pidxyzdata07depth'
 writeFileHeader(myFile)
 
 # calls to velocity command, breaks if call it too much
-count = 0
 speed = 0
 speed2 = 0
 speed3 = 0
 frame = 0
+iError = 0
+iError2 = 0
+iError3 = 0
 
 
 while True:
@@ -77,7 +79,8 @@ while True:
     img, markers, twist = findAruco(arucoDict, img, parameters, mtx, dist)
 
     # Step 3 - Control, This is where we apply the error from where we want to be
-    pError, pError2, pError3, speed, speed2, speed3 = trackAruco(myDrone, twist, pid, pid2, pid3, pError, pError2, pError3)
+    time = myDrone.get_flight_time()
+    pError, pError2, pError3, speed, speed2, speed3, iError, iError2, iError3 = trackAruco(myDrone, twist, pid, pid2, pid3, pError, pError2, pError3, iError, iError2, iError3, time)
 
     # sped.append([twist[1],speed3])
 
@@ -85,8 +88,7 @@ while True:
     # Write data to queue
     data = []
     data.append(myDrone.get_height())
-    data.append(myDrone.get_flight_time())
-    data.append(time.time())
+    data.append(time)
     data.append(speed)
     data.append(speed2)
     data.append(speed3)
