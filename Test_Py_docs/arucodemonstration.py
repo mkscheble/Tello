@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 
-dictionary = cv2.aruco.Dictionary_get(cv2.aruco.DICT_4X4_50)
+dictionary = cv2.aruco.Dictionary_get(cv2.aruco.DICT_6X6_250)
 
 markerImage = np.zeros((200, 200), dtype=np.uint8)
 markerImage = cv2.aruco.drawMarker(dictionary, 9, 200, markerImage, 1)
