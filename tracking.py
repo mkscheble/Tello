@@ -1,7 +1,6 @@
 from utils import *
 import cv2
 from writedata import *
-from arucoTracking import *
 from time import sleep
 import time
 dataQ = Queue()
@@ -12,8 +11,8 @@ w, h = 640, 480
 deadZone = 100
 """pid controls left_right velocity, pid2 controls moving forward, pid3 controls yaw velocity"""
 # if you have value over 120, image seems to buffer the frames and drone drifts off
-pid = [120.0, 1.0, 0]
-pid2 = [120.0, 10.01, 0]
+pid = [120.0, 7.0, 0]
+pid2 = [120.0, 0, 0]
 pid3 = [10.01,10.01, 0]
 
 # pError stands for previous error, used for PID controller
@@ -71,16 +70,8 @@ while True:
 
     # Step 3 - Control, This is where we apply the error from where we want to be
     # if count == 5:
-
-    # pError, pError2, pError3, speed, speed2, speed3 = trackAruco(myDrone, twist, pid, pid2, pid3, pError, pError2, pError3)
-    if count <= 5:
-        pError, speed = trackArucoX(myDrone, twist, pid, pError)
-        if np.abs(pError) < 0.1:
-            count = count + 1
-    elif 5 < count:
-        pError2, speed2 = trackArucoY(myDrone, twist, pid2, pError2)
-        if np.abs(pError2) < 0.1:
-            count = count + 1
+    pError, pError2, pError3, speed, speed2, speed3 = trackAruco(myDrone, twist, pid, pid2, pid3, pError, pError2, pError3)
+    sped.append(speed2)
     #     count = 0
     # count = count + 1
 
@@ -100,7 +91,7 @@ while True:
     cv2.imshow('Camera Feed Tello', img)
 
     # Hold Q for 5 seconds and then the drone will land, need to be in image feed
-    if cv2.waitKey(5) & 0xFF == ord('q'):
+    if cv2.waitKey(1) & 0xFF == ord('q'):
         myDrone.land()
         # take data queue that we've been appending to and write to file
         appendtoFile(myFile, dataQ)
