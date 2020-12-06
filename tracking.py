@@ -14,13 +14,19 @@ deadZone = 100
 # if you have value over 120, image seems to buffer the frames and drone drifts off
 pid = [120.0, 7.0, 0.1]
 pid2 = [600.0, 5.0, 0.15]
-# pid3 = [100.0, 1.0, 0]
 pid3 = [120.0, 1.0, 0.15]
 
+pidxs = [30.0, 2.0, 0.1]
+pid2xs = [30.0, 2.0, 0.15]
+pid3xs = [30.0, 1.0, 0.15]
 # pError stands for previous error, used for PID controller
 pError = 0
 pError2 = 0
 pError3 = 0
+pErrorxs = 0
+pError2xs = 0
+pError3xs = 0
+
 startCounter = 0  # 1 - No Flight, 0 Flight
 specs = [w, h, deadZone]
 # dir = 0
@@ -47,9 +53,15 @@ speed = 0
 speed2 = 0
 speed3 = 0
 frame = 0
+
 iError = 0
 iError2 = 0
 iError3 = 0
+iErrorxs = 0
+iError2xs = 0
+iError3xs = 0
+
+boolean = True
 
 start = time.time()
 while True:
@@ -79,8 +91,20 @@ while True:
 
     # Step 3 - Control, This is where we apply the error from where we want to be
     elapsed = time.time() - start
-    pError, pError2, pError3, speed, speed2, speed3, iError, iError2, iError3 = trackAruco(myDrone, twist, pid, pid2, pid3, pError, pError2, pError3, iError, iError2, iError3, elapsed)
-
+    if boolean:
+        pError, pError2, pError3, speed, speed2, speed3, iError, iError2, iError3, boolean = trackAruco(myDrone, twist, pid,
+                                                                                                        pid2, pid3, pError, pError2, pError3,
+                                                                                                        iError, iError2, iError3, elapsed)
+        if boolean == False:
+            start = elapsed
+    else:
+        pError, pError2, pError3, speed, speed2, speed3, iError, iError2, iError3, boolean = trackAruco(myDrone, twist,
+                                                                                                        pidxs, pid2xs, pid3xs,
+                                                                                                        pErrorxs, pError2xs,
+                                                                                                        pError3xs, iErrorxs,
+                                                                                                        iError2xs,
+                                                                                                        iError3xs,
+                                                                                                        elapsed)
     # sped.append([twist[1],speed3])
 
 

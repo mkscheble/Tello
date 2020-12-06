@@ -189,7 +189,7 @@ def trackAruco(myDrone, twist, pid, pid2, pid3, pError, pError2, pError3, iError
     xdesired = 0
     ydesired = -0.03
     zdesired = 0.6
-
+    boolean = True
     # Sends RC command based on distance of translation vector
     if np.all(twist[1]) != None:
         if np.all(twist[1][0][0]) != 0:
@@ -224,6 +224,8 @@ def trackAruco(myDrone, twist, pid, pid2, pid3, pError, pError2, pError3, iError
             myDrone.up_down_velocity = speed2  # speed2
             myDrone.for_back_velocity = speed3 #speed3
             myDrone.yaw_velocity = 0
+            if error < 0.1 & error2 < 0.1 & error3 < 0.1:
+                boolean = False
     else:
         myDrone.for_back_velocity = 0
         myDrone.left_right_velocity = 0
@@ -242,6 +244,6 @@ def trackAruco(myDrone, twist, pid, pid2, pid3, pError, pError2, pError3, iError
                                 myDrone.yaw_velocity)
 
     # return errors for previous errors and PID controller
-    return error, error2, error3, speed, speed2, speed3, iError, iError2, iError3
+    return error, error2, error3, speed, speed2, speed3, iError, iError2, iError3, boolean
 
 
