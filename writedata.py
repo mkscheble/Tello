@@ -4,7 +4,7 @@ import numpy as np
 
 def writeFileHeader(dataFileName):
     fileout = open(dataFileName,'w')
-    fileout.write('begin\n')
+    fileout.write('height, flight_time, time, speed, speed2, speed3, Error, Error2, Error3\n')
     fileout.close()
 
 def appendtoFile(dataFileName, dataQ):
