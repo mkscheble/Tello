@@ -1,6 +1,7 @@
 from utils import *
 import cv2
 from writedata import *
+from arucoTracking import *
 from time import sleep
 import time
 dataQ = Queue()
@@ -70,8 +71,16 @@ while True:
 
     # Step 3 - Control, This is where we apply the error from where we want to be
     # if count == 5:
-    pError, pError2, pError3, speed, speed2, speed3 = trackAruco(myDrone, twist, pid, pid2, pid3, pError, pError2, pError3)
-    sped.append(speed2)
+
+    # pError, pError2, pError3, speed, speed2, speed3 = trackAruco(myDrone, twist, pid, pid2, pid3, pError, pError2, pError3)
+    if count <= 5:
+        pError, speed = trackArucoX(myDrone, twist, pid, pError)
+        if np.abs(pError) < 0.1:
+            count = count + 1
+    elif 5 < count:
+        pError2, speed2 = trackArucoY(myDrone, twist, pid2, pError2)
+        if np.abs(pError2) < 0.1:
+            count = count + 1
     #     count = 0
     # count = count + 1
 
