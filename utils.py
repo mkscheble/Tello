@@ -197,22 +197,23 @@ def trackAruco(myDrone, twist, pid, pid2, pid3, pError, pError2, pError3):
     if np.all(twist[1]) != None:
         if np.all(twist[1][0][0]) != 0:
             # PID for left_right_forwards backwards
-            error = twist[1][0][0][0]
-            speed = pid[0] * error + pid[1] * (error - pError)
-            speed = int(np.clip(speed, -30, 30))
+            # error = twist[1][0][0][0]
+            # speed = pid[0] * error + pid[1] * (error - pError)
+            # speed = int(np.clip(speed, -30, 30))
 
-            # error2 = twist[1][0][0][1]
-            # speed2 = pid2[0] * error2 + pid2[1] * (error2 - pError2)
-            # speed2 = int(np.clip(speed2, -30, 30))
+            error2 = twist[1][0][0][1]
+            speed2 = pid2[0] * error2 + pid2[1] * (error2 - pError2)
+            speed2 = int(np.clip(speed2, -30, 30))
 
             # # PID for forwards backwards
             # error3 = twist[1][0][0][2]
             # speed3 = pid3[0] * error3 + pid3[1] * (error3 - pError3)
             # speed3 = int(np.clip(speed2, -30, 30))
-
-            speed2 = 0
+            speed = 0
+            error = 0
+            # speed2 = 0
             speed3 = 0
-            error2 = 0
+            # error2 = 0
             error3 = 0
 
 
@@ -221,7 +222,7 @@ def trackAruco(myDrone, twist, pid, pid2, pid3, pError, pError2, pError3):
             # print('speed3', speed3, '\n')
             myDrone.left_right_velocity = speed
             myDrone.for_back_velocity = 0 #speed3
-            myDrone.up_down_velocity = 0 #speed2
+            myDrone.up_down_velocity = speed2 #speed2
             myDrone.yaw_velocity = 0
     else:
         myDrone.for_back_velocity = 0

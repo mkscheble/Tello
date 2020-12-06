@@ -200,9 +200,9 @@ while True:
     send(message)
     sleep(1.5)
     
-    message = 'flip b'
-    send(message)
-    sleep(5.0)
+    # message = 'flip b'
+    # send(message)
+    # sleep(5.0)
     
     message='rc 0 0 0 0' # stop motion
     control_input = 0
