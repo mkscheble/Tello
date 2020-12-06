@@ -14,7 +14,7 @@ deadZone = 100
 # if you have value over 120, image seems to buffer the frames and drone drifts off
 pid = [120.0, 7.0, 0]
 pid2 = [600.0, 5.0, 0]
-pid3 = [100.0, 0.0, 0]
+pid3 = [100.0, 1.0, 0]
 
 # pError stands for previous error, used for PID controller
 pError = 0
@@ -22,9 +22,9 @@ pError2 = 0
 pError3 = 0
 startCounter = 0  # 1 - No Flight, 0 Flight
 specs = [w, h, deadZone]
-dir = 0
+# dir = 0
 data = []
-sped = []
+# sped = []
 
 """constants for aruco analysis, found from camera calibration done seperately, mtx is camera matrix"""
 arucoDict = cv2.aruco.Dictionary_get(cv2.aruco.DICT_6X6_250)
@@ -68,41 +68,30 @@ while True:
 
     # Step 2 - Track what is in frame
     """In our case we are using an aruco code"""
-    # tracking face image
+    # tracking face image, commented because we ain't using no face yuh
     # img, dir = getDirection(img, info, specs)
     # pError, pError2, pError3 = trackFace(myDrone, info, w, pid, pid2, pid3, pError, pError2, pError3, dir)
-    print("yes i'm blessed")
-    #trackinng aruco tag
+
+    # tracking aruco tag
     img, markers, twist = findAruco(arucoDict, img, parameters, mtx, dist)
 
     # Step 3 - Control, This is where we apply the error from where we want to be
-    # if count == 5:
-    # print(count)
     pError, pError2, pError3, speed, speed2, speed3 = trackAruco(myDrone, twist, pid, pid2, pid3, pError, pError2, pError3)
-    # print(twist[1], speed2)
-    # if count <= 10:
-    #     pError, speed = trackArucoX(myDrone, twist, pid, pError)
-    #     if np.abs(pError) < 0.01:
-    #         count = count + 1
-    # elif 10 < count:
-    #     # pError2, speed2 = trackArucoY(myDrone, twist, pid2, pError2)
-    #     pError, speed = trackArucoX(myDrone, twist, pid, pError)
-    #     if np.abs(pError2) < 0.1:
-    #         count = count + 1
-    #     count = 0
-    # count = count + 1
-    sped.append([twist[1],speed3])
+
+    # sped.append([twist[1],speed3])
 
 
     # Write data to queue
     data = []
-    data.append(myDrone.get_speed())
     data.append(myDrone.get_height())
     data.append(myDrone.get_flight_time())
     data.append(time.time())
     data.append(speed)
     data.append(speed2)
     data.append(speed3)
+    data.append(pError)
+    data.append(pError2)
+    data.append(pError3)
     dataQ.put(data)
 
     # show the image, which is just the camera feed
@@ -114,6 +103,6 @@ while True:
         # take data queue that we've been appending to and write to file
         appendtoFile(myFile, dataQ)
         cv2.destroyAllWindows()
-        print(sped)
+        # print(sped)
         break
 

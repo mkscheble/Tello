@@ -155,25 +155,17 @@ def dothething(myDrone):
     myDrone.move_up(60)
     myDrone.move_right(60)
 
-# def findAruco(img):
-#     """Detects the aruco markers and returns a detected markers on image and the image."""
-#
-#     dictionary = cv2.aruco.Dictionary_get(cv2.aruco.DICT_6X6_250)
-#     parameters = cv2.aruco.DetectorParameters_create()
-#     # have to set frame to something
-#     markerCorners, markerIds, rejectedCandidates = cv2.aruco.detectMarkers(img, dictionary, parameters=parameters)
-#     frame_markers = cv2.aruco.drawDetectedMarkers(img, markerCorners, markerIds)
-#     return img, frame_markers
-
 
 def findAruco(dictionary, img, parameters, mtx, dist):
     """Detect aruco code and draw markers around it, Also draw orientation and give orientation axis"""
     markerCorners, markerIDs, rejectedCandidates = cv2.aruco.detectMarkers(img, dictionary, parameters = parameters)
     img = cv2.aruco.drawDetectedMarkers(img, markerCorners, markerIDs)
     position = 0
-    # Get poses, rvec = rotation vector, tvec = translation vector, 0.05 is marker width
+
+    # Get poses, rvec = rotation vector, tvec = translation vector, 0.05 is marker width for drawing
     rvec, tvec, _ = cv2.aruco.estimatePoseSingleMarkers(markerCorners, 0.05, mtx, dist)
 
+    #comment because it lags everything!! This is very wack!
     # if np.all(markerIDs != None):
     #     for marker_idx in range(0,len(markerIDs)):
     #         # Draw rotation axes and display translation
