@@ -194,7 +194,6 @@ def trackAruco(myDrone, twist, pid, pid2, pid3, pError, pError2, pError3, iError
     if np.all(twist[1]) != None:
         if np.all(twist[1][0][0]) != 0:
             # PID for left_right
-            time = int(time[:-3])
             error = twist[1][0][0][0] - xdesired
             iError = iError + time * error
             speed = pid[0] * error + pid[1] * (error - pError) + pid[2] * iError

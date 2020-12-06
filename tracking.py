@@ -21,12 +21,11 @@ pid3 = [120.0, 1.0, 0]
 pError = 0
 pError2 = 0
 pError3 = 0
-startCounter = 0  # 1 - No Flight, 0 Flight
+startCounter = 1  # 1 - No Flight, 0 Flight
 specs = [w, h, deadZone]
 # dir = 0
 data = []
 # sped = []
-
 """constants for aruco analysis, found from camera calibration done seperately, mtx is camera matrix"""
 arucoDict = cv2.aruco.Dictionary_get(cv2.aruco.DICT_6X6_250)
 parameters = cv2.aruco.DetectorParameters_create()
@@ -52,7 +51,7 @@ iError = 0
 iError2 = 0
 iError3 = 0
 
-
+start = time.time()
 while True:
 
     # Flight
@@ -79,8 +78,8 @@ while True:
     img, markers, twist = findAruco(arucoDict, img, parameters, mtx, dist)
 
     # Step 3 - Control, This is where we apply the error from where we want to be
-    time = myDrone.get_flight_time()
-    pError, pError2, pError3, speed, speed2, speed3, iError, iError2, iError3 = trackAruco(myDrone, twist, pid, pid2, pid3, pError, pError2, pError3, iError, iError2, iError3, time)
+    elapsed = time.time() - start
+    pError, pError2, pError3, speed, speed2, speed3, iError, iError2, iError3 = trackAruco(myDrone, twist, pid, pid2, pid3, pError, pError2, pError3, iError, iError2, iError3, elapsed)
 
     # sped.append([twist[1],speed3])
 
@@ -88,7 +87,7 @@ while True:
     # Write data to queue
     data = []
     data.append(myDrone.get_height())
-    data.append(time)
+    data.append(elapsed)
     data.append(speed)
     data.append(speed2)
     data.append(speed3)
