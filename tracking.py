@@ -47,7 +47,7 @@ count = 0
 speed = 0
 speed2 = 0
 speed3 = 0
-
+frame = 0
 
 
 while True:
@@ -58,7 +58,13 @@ while True:
         startCounter = 1
 
     # Step 1 - get the frame
-    img = telloGetFrame(myDrone, w, h)
+    print(frame)
+    if frame == 4:
+        img = telloGetFrame(myDrone, w, h)
+        frame = 0
+    else:
+        frame = frame + 1
+        continue
 
     # Step 2 - Track what is in frame
     """In our case we are using an aruco code"""
