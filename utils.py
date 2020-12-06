@@ -230,8 +230,8 @@ def trackAruco(myDrone, twist, pid, pid2, pid3, pError, pError2, pError3):
         speed = 0
         speed2 = 0
         speed3 = 0
-    # if myDrone.send_rc_control:
-    myDrone.send_rc_control(myDrone.left_right_velocity,
+    if myDrone.send_rc_control:
+        myDrone.send_rc_control(myDrone.left_right_velocity,
                                 myDrone.for_back_velocity,
                                 myDrone.up_down_velocity,
                                 myDrone.yaw_velocity)
