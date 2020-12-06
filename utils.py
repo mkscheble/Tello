@@ -187,8 +187,8 @@ def trackAruco(myDrone, twist, pid, pid2, pid3, pError, pError2, pError3, iError
 
     # change these values for world coordinates (meters) where you want to be
     xdesired = 0
-    ydesired = 0
-    zdesired = 0.7
+    ydesired = -0.03
+    zdesired = 0.3
 
     # Sends RC command based on distance of translation vector
     if np.all(twist[1]) != None:
