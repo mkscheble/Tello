@@ -77,7 +77,7 @@ def trackArucoY(myDrone, twist, pid, pError):
 
             error = twist[1][0][0][1]
             speed = pid[0] * error + pid[1] * (error - pError)
-            speed = int(np.clip(speed, -30, 30))
+            speed = int(np.clip(speed, -30, 30) * -1)
 
             # # PID for forwards backwards
             # error3 = twist[1][0][0][2]
