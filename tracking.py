@@ -12,16 +12,16 @@ w, h = 640, 480
 deadZone = 100
 """pid controls left_right velocity, pid2 controls moving forward, pid3 controls yaw velocity"""
 # if you have value over 120, image seems to buffer the frames and drone drifts off
-pid = [120.0, 7.0, 0]
-pid2 = [600.0, 5.0, 0]
+pid = [120.0, 7.0, 0.1]
+pid2 = [600.0, 5.0, 0.15]
 # pid3 = [100.0, 1.0, 0]
-pid3 = [120.0, 1.0, 0]
+pid3 = [120.0, 1.0, 0.15]
 
 # pError stands for previous error, used for PID controller
 pError = 0
 pError2 = 0
 pError3 = 0
-startCounter = 1  # 1 - No Flight, 0 Flight
+startCounter = 0  # 1 - No Flight, 0 Flight
 specs = [w, h, deadZone]
 # dir = 0
 data = []

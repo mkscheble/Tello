@@ -197,7 +197,6 @@ def trackAruco(myDrone, twist, pid, pid2, pid3, pError, pError2, pError3, iError
             error = twist[1][0][0][0] - xdesired
             iError = iError + time * error
             speed = pid[0] * error + pid[1] * (error - pError) + pid[2] * iError
-            # speed = int(np.clip(speed, -10, 10))
             speed = int(np.clip(speed, -15, 15))
 
             #PID for up_down
