@@ -13,14 +13,14 @@ deadZone = 100
 """pid controls left_right velocity, pid2 controls moving forward, pid3 controls yaw velocity"""
 # if you have value over 120, image seems to buffer the frames and drone drifts off
 pid = [120.0, 7.0, 0]
-pid2 = [120.0, 0.0, 0]
-pid3 = [10.01,10.01, 0]
+pid2 = [600.0, 5.0, 0]
+pid3 = [100.0, 0.0, 0]
 
 # pError stands for previous error, used for PID controller
 pError = 0
 pError2 = 0
 pError3 = 0
-startCounter = 1  # 1 - No Flight, 0 Flight
+startCounter = 0  # 1 - No Flight, 0 Flight
 specs = [w, h, deadZone]
 dir = 0
 data = []
@@ -79,7 +79,7 @@ while True:
     # if count == 5:
     # print(count)
     pError, pError2, pError3, speed, speed2, speed3 = trackAruco(myDrone, twist, pid, pid2, pid3, pError, pError2, pError3)
-    print(twist[1], speed2)
+    # print(twist[1], speed2)
     # if count <= 10:
     #     pError, speed = trackArucoX(myDrone, twist, pid, pError)
     #     if np.abs(pError) < 0.01:
@@ -91,7 +91,7 @@ while True:
     #         count = count + 1
     #     count = 0
     # count = count + 1
-    sped.append(speed2)
+    sped.append([twist[1],speed3])
 
 
     # Write data to queue
