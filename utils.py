@@ -174,17 +174,17 @@ def findAruco(dictionary, img, parameters, mtx, dist):
     # Get poses, rvec = rotation vector, tvec = translation vector, 0.05 is marker width
     rvec, tvec, _ = cv2.aruco.estimatePoseSingleMarkers(markerCorners, 0.05, mtx, dist)
 
-    if np.all(markerIDs != None):
-        for marker_idx in range(0,len(markerIDs)):
-            # Draw rotation axes and display translation
-            img = cv2.aruco.drawAxis(img, mtx, dist, rvec[marker_idx], tvec[marker_idx], 5)
-            font = cv2.FONT_HERSHEY_SIMPLEX
-            text = str([round(pos,2) for pos in tvec[marker_idx][0]])
-            position = tuple(markerCorners[marker_idx][0][0])
-            cv2.putText(img, text, position, font, 0.4, (255, 255, 255), 1, cv2.LINE_AA)
+    # if np.all(markerIDs != None):
+    #     for marker_idx in range(0,len(markerIDs)):
+    #         # Draw rotation axes and display translation
+    #         img = cv2.aruco.drawAxis(img, mtx, dist, rvec[marker_idx], tvec[marker_idx], 5)
+    #         font = cv2.FONT_HERSHEY_SIMPLEX
+    #         text = str([round(pos,2) for pos in tvec[marker_idx][0]])
+    #         position = tuple(markerCorners[marker_idx][0][0])
+    #         cv2.putText(img, text, position, font, 0.4, (255, 255, 255), 1, cv2.LINE_AA)
 
 
-    return img, [markerCorners, markerIDs], [rvec, tvec], position
+    return img, [markerCorners, markerIDs], [rvec, tvec]
 
 def trackAruco(myDrone, twist, pid, pid2, pid3, pError, pError2, pError3):
     """PID controller implemented for moving forward, yaw_axis, and left right velocity
@@ -197,20 +197,20 @@ def trackAruco(myDrone, twist, pid, pid2, pid3, pError, pError2, pError3):
     if np.all(twist[1]) != None:
         if np.all(twist[1][0][0]) != 0:
             # PID for left_right_forwards backwards
-            # error = twist[1][0][0][0]
-            # speed = pid[0] * error + pid[1] * (error - pError)
-            # speed = int(np.clip(speed, -30, 30))
+            error = twist[1][0][0][0]
+            speed = pid[0] * error + pid[1] * (error - pError)
+            speed = int(np.clip(speed, -5, 5))
 
             error2 = twist[1][0][0][1]
             speed2 = pid2[0] * error2 + pid2[1] * (error2 - pError2)
-            speed2 = int(np.clip(speed2, -30, 30))
+            speed2 = int(np.clip(speed2, -5, 5)) * -1
 
             # # PID for forwards backwards
-            # error3 = twist[1][0][0][2]
-            # speed3 = pid3[0] * error3 + pid3[1] * (error3 - pError3)
-            # speed3 = int(np.clip(speed2, -30, 30))
-            speed = 0
-            error = 0
+            error3 = twist[1][0][0][2]
+            speed3 = pid3[0] * error3 + pid3[1] * (error3 - pError3)
+            speed3 = int(np.clip(speed2, -30, 30))
+            # speed2 = 0
+            # error2 = 0
             # speed2 = 0
             speed3 = 0
             # error2 = 0
@@ -220,7 +220,7 @@ def trackAruco(myDrone, twist, pid, pid2, pid3, pError, pError2, pError3):
             # print('speed', speed,'\n')
             # print('speed2', speed2)
             # print('speed3', speed3, '\n')
-            myDrone.left_right_velocity = speed
+            myDrone.left_right_velocity = 0
             myDrone.for_back_velocity = 0 #speed3
             myDrone.up_down_velocity = speed2 #speed2
             myDrone.yaw_velocity = 0

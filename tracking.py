@@ -13,14 +13,14 @@ deadZone = 100
 """pid controls left_right velocity, pid2 controls moving forward, pid3 controls yaw velocity"""
 # if you have value over 120, image seems to buffer the frames and drone drifts off
 pid = [120.0, 7.0, 0]
-pid2 = [120.0, 0, 0]
+pid2 = [120.0, 0.0, 0]
 pid3 = [10.01,10.01, 0]
 
 # pError stands for previous error, used for PID controller
 pError = 0
 pError2 = 0
 pError3 = 0
-startCounter = 0  # 1 - No Flight, 0 Flight
+startCounter = 1  # 1 - No Flight, 0 Flight
 specs = [w, h, deadZone]
 dir = 0
 data = []
@@ -58,9 +58,9 @@ while True:
         startCounter = 1
 
     # Step 1 - get the frame
-    print(frame)
-    if frame == 4:
-        img = telloGetFrame(myDrone, w, h)
+    img = telloGetFrame(myDrone, w, h)
+    if frame == 50:
+        # img = telloGetFrame(myDrone, w, h)
         frame = 0
     else:
         frame = frame + 1
@@ -71,37 +71,39 @@ while True:
     # tracking face image
     # img, dir = getDirection(img, info, specs)
     # pError, pError2, pError3 = trackFace(myDrone, info, w, pid, pid2, pid3, pError, pError2, pError3, dir)
-
+    print("yes i'm blessed")
     #trackinng aruco tag
-    img, markers, twist, position = findAruco(arucoDict, img, parameters, mtx, dist)
+    img, markers, twist = findAruco(arucoDict, img, parameters, mtx, dist)
 
     # Step 3 - Control, This is where we apply the error from where we want to be
     # if count == 5:
-    print(count)
-    # pError, pError2, pError3, speed, speed2, speed3 = trackAruco(myDrone, twist, pid, pid2, pid3, pError, pError2, pError3)
-    if count <= 5:
-        pError, speed = trackArucoX(myDrone, twist, pid, pError)
-        if np.abs(pError) < 0.01:
-            count = count + 1
-    elif 5 < count:
-        # pError2, speed2 = trackArucoY(myDrone, twist, pid2, pError2)
-        pError, speed = trackArucoX(myDrone, twist, pid, pError)
-        if np.abs(pError2) < 0.1:
-            count = count + 1
+    # print(count)
+    pError, pError2, pError3, speed, speed2, speed3 = trackAruco(myDrone, twist, pid, pid2, pid3, pError, pError2, pError3)
+    print(twist[1], speed2)
+    # if count <= 10:
+    #     pError, speed = trackArucoX(myDrone, twist, pid, pError)
+    #     if np.abs(pError) < 0.01:
+    #         count = count + 1
+    # elif 10 < count:
+    #     # pError2, speed2 = trackArucoY(myDrone, twist, pid2, pError2)
+    #     pError, speed = trackArucoX(myDrone, twist, pid, pError)
+    #     if np.abs(pError2) < 0.1:
+    #         count = count + 1
     #     count = 0
     # count = count + 1
+    sped.append(speed2)
 
 
     # Write data to queue
-    # data = []
-    # data.append(myDrone.get_speed())
-    # data.append(myDrone.get_height())
-    # data.append(myDrone.get_flight_time())
-    # data.append(time.time())
-    # data.append(speed)
-    # data.append(speed2)
-    # data.append(speed3)
-    # dataQ.put(data)
+    data = []
+    data.append(myDrone.get_speed())
+    data.append(myDrone.get_height())
+    data.append(myDrone.get_flight_time())
+    data.append(time.time())
+    data.append(speed)
+    data.append(speed2)
+    data.append(speed3)
+    dataQ.put(data)
 
     # show the image, which is just the camera feed
     cv2.imshow('Camera Feed Tello', img)
