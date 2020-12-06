@@ -14,7 +14,8 @@ deadZone = 100
 # if you have value over 120, image seems to buffer the frames and drone drifts off
 pid = [120.0, 7.0, 0]
 pid2 = [600.0, 5.0, 0]
-pid3 = [100.0, 1.0, 0]
+# pid3 = [100.0, 1.0, 0]
+pid3 = [120.0, 1.0, 0]
 
 # pError stands for previous error, used for PID controller
 pError = 0
