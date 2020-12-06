@@ -39,7 +39,7 @@ dist = np.float32([[-4.09107478e-03, -7.38739614e-04, 1.68557817e-03, 1.16567623
 myDrone = initializeTello()
 
 # write to this file
-myFile = 'pidxyzdata07depth'
+myFile = 'data'
 # create file
 writeFileHeader(myFile)
 
