@@ -166,17 +166,17 @@ def findAruco(dictionary, img, parameters, mtx, dist):
     rvec, tvec, _ = cv2.aruco.estimatePoseSingleMarkers(markerCorners, 0.05, mtx, dist)
 
     #comment because it lags everything!! This is very wack!
-    # if np.all(markerIDs != None):
-    #     for marker_idx in range(0,len(markerIDs)):
-    #         # Draw rotation axes and display translation
-    #         img = cv2.aruco.drawAxis(img, mtx, dist, rvec[marker_idx], tvec[marker_idx], 5)
-    #         font = cv2.FONT_HERSHEY_SIMPLEX
-    #         text = str([round(pos,2) for pos in tvec[marker_idx][0]])
-    #         position = tuple(markerCorners[marker_idx][0][0])
-    #         cv2.putText(img, text, position, font, 0.4, (255, 255, 255), 1, cv2.LINE_AA)
+    if np.all(markerIDs != None):
+        for marker_idx in range(0,len(markerIDs)):
+            # Draw rotation axes and display translation
+            img = cv2.aruco.drawAxis(img, mtx, dist, rvec[marker_idx], tvec[marker_idx], 5)
+            font = cv2.FONT_HERSHEY_SIMPLEX
+            text = str([round(pos,2) for pos in tvec[marker_idx][0]])
+            position = tuple(markerCorners[marker_idx][0][0])
+            cv2.putText(img, text, position, font, 0.4, (255, 255, 255), 1, cv2.LINE_AA)
 
 
-    return img, [markerCorners, markerIDs], [rvec, tvec]
+    return img, markerCorners, markerIDs, [rvec, tvec]
 
 def trackAruco(myDrone, twist, pid, pid2, pid3, pError, pError2, pError3, iError, iError2, iError3, time):
     """PID controller implemented for moving forward_back, up_down, and left_right velocity"""
@@ -224,7 +224,7 @@ def trackAruco(myDrone, twist, pid, pid2, pid3, pError, pError2, pError3, iError
             myDrone.up_down_velocity = speed2  # speed2
             myDrone.for_back_velocity = speed3 #speed3
             myDrone.yaw_velocity = 0
-            if error < 0.1 & error2 < 0.1 & error3 < 0.1:
+            if error < 0.01 and error2 < 0.01 and error3 < 0.01:
                 boolean = False
     else:
         myDrone.for_back_velocity = 0
@@ -246,4 +246,68 @@ def trackAruco(myDrone, twist, pid, pid2, pid3, pError, pError2, pError3, iError
     # return errors for previous errors and PID controller
     return error, error2, error3, speed, speed2, speed3, iError, iError2, iError3, boolean
 
+def trackArucoSmall(myDrone, twist, pid, pid2, pid3, pError, pError2, pError3, iError, iError2, iError3, time):
+    """PID controller implemented for moving forward_back, up_down, and left_right velocity"""
+
+    """trim speeds because indoors and don't want a crazy velocity into the wall, also but greater 
+    incentive on left right so aruco doesn't leave frame, also because frames don't update quick enough, 
+    scared it might not update and just keep flying into the wall"""
+
+    # change these values for world coordinates (meters) where you want to be
+    xdesired = 0
+    ydesired = -0.15
+    zdesired = 0.3
+    # Sends RC command based on distance of translation vector
+    if np.all(twist[1]) != None:
+        if np.all(twist[1][0][0]) != 0:
+            # PID for left_right
+            error = twist[1][0][0][0] - xdesired
+            iError = iError + time * error
+            speed = pid[0] * error + pid[1] * (error - pError) + pid[2] * iError
+            speed = int(np.clip(speed, -5, 5))
+
+            #PID for up_down
+            error2 = twist[1][0][0][1] - ydesired
+            iError2 = iError2 + time * error2
+            speed2 = pid2[0] * error2 + pid2[1] * (error2 - pError2) + pid2[2] * iError2
+            speed2 = int(np.clip(speed2, -10, 10)) * -1
+
+            # PID for forwards_backwards
+            error3 = twist[1][0][0][2] - zdesired
+            iError3 = iError3 + time * error3
+            speed3 = pid3[0] * error3 + pid3[1] * (error3 - pError3) + pid3[2] * iError3
+            speed3 = int(np.clip(speed3, -3, 3))
+            # speed2 = 0
+            # error2 = 0
+            # speed2 = 0
+            # speed = 0
+            # error = 0
+            # error2 = 0
+            # print('speed', speed,'\n')
+            # print('speed2', speed2)
+            # print('speed3', speed3, '\n')
+
+            myDrone.left_right_velocity = speed
+            myDrone.up_down_velocity = speed2  # speed2
+            myDrone.for_back_velocity = speed3 #speed3
+            myDrone.yaw_velocity = 0
+    else:
+        myDrone.for_back_velocity = 0
+        myDrone.left_right_velocity = 0
+        myDrone.up_down_velocity = 0
+        myDrone.yaw_velocity = 0
+        error = 0
+        error2 = 0
+        error3 = 0
+        speed = 0
+        speed2 = 0
+        speed3 = 0
+    if myDrone.send_rc_control:
+        myDrone.send_rc_control(myDrone.left_right_velocity,
+                                myDrone.for_back_velocity,
+                                myDrone.up_down_velocity,
+                                myDrone.yaw_velocity)
+
+    # return errors for previous errors and PID controller
+    return error, error2, error3, speed, speed2, speed3, iError, iError2, iError3
 

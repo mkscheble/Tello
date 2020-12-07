@@ -16,9 +16,9 @@ pid = [120.0, 7.0, 0.1]
 pid2 = [600.0, 5.0, 0.15]
 pid3 = [120.0, 1.0, 0.15]
 
-pidxs = [30.0, 2.0, 0.1]
-pid2xs = [30.0, 2.0, 0.15]
-pid3xs = [30.0, 1.0, 0.15]
+pidxs = [10.0, 0.0, 0.05]
+pid2xs = [10.0, 0.0, 0.05]
+pid3xs = [10.0, 0.0, 0.05]
 # pError stands for previous error, used for PID controller
 pError = 0
 pError2 = 0
@@ -27,7 +27,7 @@ pErrorxs = 0
 pError2xs = 0
 pError3xs = 0
 
-startCounter = 0  # 1 - No Flight, 0 Flight
+startCounter = 1  # 1 - No Flight, 0 Flight
 specs = [w, h, deadZone]
 # dir = 0
 data = []
@@ -87,18 +87,26 @@ while True:
     # pError, pError2, pError3 = trackFace(myDrone, info, w, pid, pid2, pid3, pError, pError2, pError3, dir)
 
     # tracking aruco tag
-    img, markers, twist = findAruco(arucoDict, img, parameters, mtx, dist)
-
+    img, markerCorners, markerIDs, twist = findAruco(arucoDict, img, parameters, mtx, dist)
+    print(twist)
+    # sleep(1)
     # Step 3 - Control, This is where we apply the error from where we want to be
     elapsed = time.time() - start
     if boolean:
-        pError, pError2, pError3, speed, speed2, speed3, iError, iError2, iError3, boolean = trackAruco(myDrone, twist, pid,
+        if markerIDs != None:
+            if int(markerIDs[0][0]) == 9:
+                pError, pError2, pError3, speed, speed2, speed3, iError, iError2, iError3, boolean = trackAruco(myDrone, twist, pid,
                                                                                                         pid2, pid3, pError, pError2, pError3,
                                                                                                         iError, iError2, iError3, elapsed)
         if boolean == False:
+            print('the cat is out of the bag \n')
             start = elapsed
+            sleep(3)
     else:
-        pError, pError2, pError3, speed, speed2, speed3, iError, iError2, iError3, boolean = trackAruco(myDrone, twist,
+        print('small pid \n')
+        if markerIDs != None:
+            if int(markerIDs[0][0]) == 34:
+                pError, pError2, pError3, speed, speed2, speed3, iError, iError2, iError3 = trackArucoSmall(myDrone, twist,
                                                                                                         pidxs, pid2xs, pid3xs,
                                                                                                         pErrorxs, pError2xs,
                                                                                                         pError3xs, iErrorxs,
