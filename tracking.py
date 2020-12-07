@@ -12,13 +12,13 @@ w, h = 640, 480
 deadZone = 100
 """pid controls left_right velocity, pid2 controls moving forward, pid3 controls yaw velocity"""
 # if you have value over 120, image seems to buffer the frames and drone drifts off
-pid = [120.0, 7.0, 0.1]
-pid2 = [600.0, 5.0, 0.15]
-pid3 = [120.0, 1.0, 0.15]
+pid = [120.0, 7.0, 0.001]
+pid2 = [600.0, 5.0, 0.0015]
+pid3 = [20.0, 5.0, 0.005]
 
-pidxs = [10.0, 0.0, 0.05]
-pid2xs = [10.0, 0.0, 0.05]
-pid3xs = [10.0, 0.0, 0.05]
+pidxs = [42.0, 10.0, 0.005]
+pid2xs = [65.0, 15.0, 0.005]
+pid3xs = [8.5, 10.0, 0.002]
 # pError stands for previous error, used for PID controller
 pError = 0
 pError2 = 0
@@ -27,11 +27,9 @@ pErrorxs = 0
 pError2xs = 0
 pError3xs = 0
 
-startCounter = 1  # 1 - No Flight, 0 Flight
+startCounter = 0  # 1 - No Flight, 0 Flight
 specs = [w, h, deadZone]
-# dir = 0
 data = []
-# sped = []
 """constants for aruco analysis, found from camera calibration done seperately, mtx is camera matrix"""
 arucoDict = cv2.aruco.Dictionary_get(cv2.aruco.DICT_6X6_250)
 parameters = cv2.aruco.DetectorParameters_create()
@@ -64,8 +62,10 @@ iError3xs = 0
 bigtag = 9
 liltag = 50
 boolean = True
-
+framerate = 50
+second = 0
 start = time.time()
+count = 0
 while True:
 
     # Flight
@@ -75,7 +75,7 @@ while True:
 
     # Step 1 - get the frame
     img = telloGetFrame(myDrone, w, h)
-    if frame == 50:
+    if frame == framerate:
         # img = telloGetFrame(myDrone, w, h)
         frame = 0
     else:
@@ -90,9 +90,9 @@ while True:
 
     # tracking aruco tag
     img, markerCorners, markerIDs, twist = findAruco(arucoDict, img, parameters, mtx, dist)
-    # sleep(1)
+    # print(twist)
     # Step 3 - Control, This is where we apply the error from where we want to be
-    elapsed = time.time() - start
+    elapsed = time.time() - start - second
     if boolean:
         if np.all(markerIDs) != None:
             if [bigtag] in markerIDs and np.all(twist) != None:
@@ -102,24 +102,53 @@ while True:
                                                                                                             pid2, pid3, pError, pError2, pError3,
                                                                                                             iError, iError2, iError3, elapsed)
             if boolean == False:
-                print('the cat is out of the bag \n')
-                start = elapsed
+                if count == 10:
+                    print('the cat is out of the bag \n')
+                    pError, pError2, pError3 = 0, 0, 0
+                    second = elapsed
+                    framerate = 20
+                    dataQ.put('\nsplit\n')
+                    count = 0
+                else:
+                    count = count +1
+                    boolean = True
     else:
-        print('small pid \n')
+        print('small pid')
         if np.all(markerIDs) != None:
             if [liltag] in markerIDs and np.all(twist) != None:
                 ind = np.where(markerIDs == [liltag])
                 tvec = twist[1][ind][0]
-                pError, pError2, pError3, speed, speed2, speed3, iError, iError2, iError3 = trackArucoSmall(myDrone, tvec,
+                pErrorxs, pError2xs, pError3xs, speed, speed2, speed3, iErrorxs, iError2xs, iError3xs = trackArucoSmall(myDrone, tvec,
                                                                                                         pidxs, pid2xs, pid3xs,
                                                                                                         pErrorxs, pError2xs,
                                                                                                         pError3xs, iErrorxs,
                                                                                                         iError2xs,
                                                                                                         iError3xs,
                                                                                                         elapsed)
-    # sped.append([twist[1],speed3])
-
-
+                count = 0
+            if np.abs(pErrorxs) < 0.1 and np.abs(pError2xs) < 0.1 and np.abs(pError3xs) < 0.1 \
+                    and pErrorxs != 0 and pError2xs != 0 and pError3xs != 0:
+                print('doing the thing')
+                dothething((myDrone))
+                myDrone.land()
+                # take data queue that we've been appending to and write to file
+                appendtoFile(myFile, dataQ)
+                cv2.destroyAllWindows()
+                break
+        else:
+            if count == 15:
+                print('i gotta land')
+                if np.abs(pErrorxs) < 0.15 and np.abs(pError2xs) < 0.15 and np.abs(pError3xs) < 0.1 \
+                        and pErrorxs != 0 and pError2xs != 0 and pError3xs != 0:
+                    print('doing the thing')
+                    dothething((myDrone))
+                myDrone.land()
+                # take data queue that we've been appending to and write to file
+                appendtoFile(myFile, dataQ)
+                cv2.destroyAllWindows()
+                break
+            else:
+                count = count + 1
     # Write data to queue
     data = []
     data.append(myDrone.get_height())
@@ -130,6 +159,9 @@ while True:
     data.append(pError)
     data.append(pError2)
     data.append(pError3)
+    data.append(pErrorxs)
+    data.append(pError2xs)
+    data.append(pError3xs)
     dataQ.put(data)
 
     # show the image, which is just the camera feed
@@ -141,6 +173,5 @@ while True:
         # take data queue that we've been appending to and write to file
         appendtoFile(myFile, dataQ)
         cv2.destroyAllWindows()
-        # print(sped)
         break
 

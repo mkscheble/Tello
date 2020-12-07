@@ -152,8 +152,46 @@ def getDirection(img, info, specs):
 def dothething(myDrone):
     """This function will be the given command when we center our drone and have it the correct distance from the drone.
      Ultimately, this will be used to draw on the whiteboard."""
-    myDrone.move_up(60)
-    myDrone.move_right(60)
+    sleep(1)
+    myDrone.for_back_velocity = 0
+    myDrone.left_right_velocity = 0
+    myDrone.up_down_velocity = -50
+    myDrone.yaw_velocity = 0
+    myDrone.send_rc_control(myDrone.left_right_velocity,
+                            myDrone.for_back_velocity,
+                            myDrone.up_down_velocity,
+                            myDrone.yaw_velocity)
+    sleep(1)
+    myDrone.for_back_velocity = 0
+
+    myDrone.left_right_velocity = 0
+    myDrone.up_down_velocity = 0
+    myDrone.yaw_velocity = 0
+    myDrone.send_rc_control(myDrone.left_right_velocity,
+                            myDrone.for_back_velocity,
+                            myDrone.up_down_velocity,
+                            myDrone.yaw_velocity)
+
+    sleep(1)
+    myDrone.for_back_velocity = 0
+    myDrone.left_right_velocity = 30
+    myDrone.up_down_velocity = 0
+    myDrone.yaw_velocity = 0
+    myDrone.send_rc_control(myDrone.left_right_velocity,
+                            myDrone.for_back_velocity,
+                            myDrone.up_down_velocity,
+                            myDrone.yaw_velocity)
+    sleep(1)
+
+    myDrone.for_back_velocity = 0
+    myDrone.left_right_velocity = 0
+    myDrone.up_down_velocity = 0
+    myDrone.yaw_velocity = 0
+    myDrone.send_rc_control(myDrone.left_right_velocity,
+                            myDrone.for_back_velocity,
+                            myDrone.up_down_velocity,
+                            myDrone.yaw_velocity)
+    sleep(1)
 
 
 def findAruco(dictionary, img, parameters, mtx, dist):
@@ -185,9 +223,9 @@ def trackAruco(myDrone, tvec, pid, pid2, pid3, pError, pError2, pError3, iError,
     scared it might not update and just keep flying into the wall"""
 
     # change these values for world coordinates (meters) where you want to be
-    xdesired = 0
-    ydesired = -0.03
-    zdesired = 0.6
+    xdesired = -0.04
+    ydesired = -0.04
+    zdesired = 0.30
     boolean = True
     # Sends RC command based on distance of translation vector
     if np.all(tvec) != 0:
@@ -207,13 +245,18 @@ def trackAruco(myDrone, tvec, pid, pid2, pid3, pError, pError2, pError3, iError,
         error3 = tvec[2] - zdesired
         iError3 = iError3 + time * error3
         speed3 = pid3[0] * error3 + pid3[1] * (error3 - pError3) + pid3[2] * iError3
+        # print(speed3)
         speed3 = int(np.clip(speed3, -10, 10))
+
+        # print('iError', iError3)
+        # print(error3, speed3, time)
+
 
         myDrone.left_right_velocity = speed
         myDrone.up_down_velocity = speed2  # speed2
         myDrone.for_back_velocity = speed3 #speed3
         myDrone.yaw_velocity = 0
-        if error < 0.01 and error2 < 0.01 and error3 < 0.01:
+        if np.abs(error) < 0.05 and np.abs(error2) < 0.05 and np.abs(error3) < 0.05:
             boolean = False
     else:
         myDrone.for_back_velocity = 0
@@ -245,7 +288,7 @@ def trackArucoSmall(myDrone, tvec, pid, pid2, pid3, pError, pError2, pError3, iE
     # change these values for world coordinates (meters) where you want to be
     xdesired = 0
     ydesired = -0.15
-    zdesired = 0.3
+    zdesired = 0.35
     # Sends RC command based on distance of translation vector
 
     if np.all(tvec) != 0:
@@ -253,19 +296,21 @@ def trackArucoSmall(myDrone, tvec, pid, pid2, pid3, pError, pError2, pError3, iE
         error = tvec[0] - xdesired
         iError = iError + time * error
         speed = pid[0] * error + pid[1] * (error - pError) + pid[2] * iError
-        speed = int(np.clip(speed, -5, 5))
+        speed = int(np.clip(speed, -10, 10))
 
         #PID for up_down
         error2 = tvec[1] - ydesired
         iError2 = iError2 + time * error2
         speed2 = pid2[0] * error2 + pid2[1] * (error2 - pError2) + pid2[2] * iError2
-        speed2 = int(np.clip(speed2, -10, 10)) * -1
+        speed2 = int(np.clip(speed2, -15, 15)) * -1
 
         # PID for forwards_backwards
         error3 = tvec[2] - zdesired
         iError3 = iError3 + time * error3
         speed3 = pid3[0] * error3 + pid3[1] * (error3 - pError3) + pid3[2] * iError3
-        speed3 = int(np.clip(speed3, -3, 3))
+        speed3 = int(np.clip(speed3, -10, 10))
+        # print('iError', iError3)
+        # print(error3, speed3, time)
 
         myDrone.left_right_velocity = speed
         myDrone.up_down_velocity = speed2  # speed2
