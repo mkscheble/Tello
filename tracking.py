@@ -62,7 +62,7 @@ iError2xs = 0
 iError3xs = 0
 
 bigtag = 9
-liltag = 34
+liltag = 50
 boolean = True
 
 start = time.time()
@@ -93,27 +93,23 @@ while True:
     # sleep(1)
     # Step 3 - Control, This is where we apply the error from where we want to be
     elapsed = time.time() - start
-    print(twist)
-    if boolean and np.all(markerIDs) != None:
-        if [bigtag] in markerIDs:
-            index = markerIDs.index([bigtag])
-            tvec = twist[1][0][index][0]
-            print(tvec)
-            sleep(10)
-            pError, pError2, pError3, speed, speed2, speed3, iError, iError2, iError3, boolean = trackAruco(myDrone, tvec, pid,
-                                                                                                        pid2, pid3, pError, pError2, pError3,
-                                                                                                        iError, iError2, iError3, elapsed)
-        if boolean == False:
-            print('the cat is out of the bag \n')
-            start = elapsed
+    if boolean:
+        if np.all(markerIDs) != None:
+            if [bigtag] in markerIDs and np.all(twist) != None:
+                ind = np.where(markerIDs == [bigtag])
+                tvec = twist[1][ind][0]
+                pError, pError2, pError3, speed, speed2, speed3, iError, iError2, iError3, boolean = trackAruco(myDrone, tvec, pid,
+                                                                                                            pid2, pid3, pError, pError2, pError3,
+                                                                                                            iError, iError2, iError3, elapsed)
+            if boolean == False:
+                print('the cat is out of the bag \n')
+                start = elapsed
     else:
         print('small pid \n')
         if np.all(markerIDs) != None:
-            if [liltag] in markerIDs:
-                index = markerIDs.index([liltag])
-                tvec = twist[1][0][index][0]
-                print(tvec)
-                sleep(10)
+            if [liltag] in markerIDs and np.all(twist) != None:
+                ind = np.where(markerIDs == [liltag])
+                tvec = twist[1][ind][0]
                 pError, pError2, pError3, speed, speed2, speed3, iError, iError2, iError3 = trackArucoSmall(myDrone, tvec,
                                                                                                         pidxs, pid2xs, pid3xs,
                                                                                                         pErrorxs, pError2xs,
