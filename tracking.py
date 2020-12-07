@@ -61,6 +61,8 @@ iErrorxs = 0
 iError2xs = 0
 iError3xs = 0
 
+bigtag = 9
+liltag = 34
 boolean = True
 
 start = time.time()
@@ -88,25 +90,31 @@ while True:
 
     # tracking aruco tag
     img, markerCorners, markerIDs, twist = findAruco(arucoDict, img, parameters, mtx, dist)
-    print(twist)
     # sleep(1)
     # Step 3 - Control, This is where we apply the error from where we want to be
     elapsed = time.time() - start
-    if boolean:
-        if markerIDs != None:
-            if int(markerIDs[0][0]) == 9:
-                pError, pError2, pError3, speed, speed2, speed3, iError, iError2, iError3, boolean = trackAruco(myDrone, twist, pid,
+    print(twist)
+    if boolean and np.all(markerIDs) != None:
+        if [bigtag] in markerIDs:
+            index = markerIDs.index([bigtag])
+            tvec = twist[1][0][index][0]
+            print(tvec)
+            sleep(10)
+            pError, pError2, pError3, speed, speed2, speed3, iError, iError2, iError3, boolean = trackAruco(myDrone, tvec, pid,
                                                                                                         pid2, pid3, pError, pError2, pError3,
                                                                                                         iError, iError2, iError3, elapsed)
         if boolean == False:
             print('the cat is out of the bag \n')
             start = elapsed
-            sleep(3)
     else:
         print('small pid \n')
-        if markerIDs != None:
-            if int(markerIDs[0][0]) == 34:
-                pError, pError2, pError3, speed, speed2, speed3, iError, iError2, iError3 = trackArucoSmall(myDrone, twist,
+        if np.all(markerIDs) != None:
+            if [liltag] in markerIDs:
+                index = markerIDs.index([liltag])
+                tvec = twist[1][0][index][0]
+                print(tvec)
+                sleep(10)
+                pError, pError2, pError3, speed, speed2, speed3, iError, iError2, iError3 = trackArucoSmall(myDrone, tvec,
                                                                                                         pidxs, pid2xs, pid3xs,
                                                                                                         pErrorxs, pError2xs,
                                                                                                         pError3xs, iErrorxs,
