@@ -133,13 +133,19 @@ while True:
                 print('doing the thing accurate one')
                 if message == 'square':
                     square(myDrone)
+                    addDrawingDataSquare(myDrone, dataQ, elapsed)
                 elif message == 'staircase':
                     staircase(myDrone)
+                    addDrawingDataStaircase(myDrone, dataQ, elapsed)
                 elif message == 'complex':
                     comp(myDrone)
+                    addDrawingDataComp(myDrone,dataQ, elapsed)
                 else:
                     L(myDrone)
+                    addDrawingDataL(myDrone, dataQ, elapsed)
                 moveback(myDrone)
+                dataQ.put([myDrone.get_height(), elapsed, 0,0,-60, 0, 0,0,0,0,0])
+                dataQ.put([myDrone.get_height(), elapsed, 0, 0, 0, 0, 0, 0, 0, 0, 0])
                 myDrone.land()
                 # take data queue that we've been appending to and write to file
                 appendtoFile(myFile, dataQ)
@@ -150,16 +156,22 @@ while True:
                 print('i gotta land')
                 if np.abs(pErrorxs) < 0.15 and np.abs(pError2xs) < 0.15 and pError3xs < 0.06 \
                         and pErrorxs != 0 and pError2xs != 0 and pError3xs != 0:
-                    print('doing the thing lat chance throw')
+                    print('doing the thing last chance throw')
                     if message == 'square':
                         square(myDrone)
+                        addDrawingDataSquare(myDrone, dataQ, elapsed)
                     elif message == 'staircase':
                         staircase(myDrone)
+                        addDrawingDataStaircase(myDrone, dataQ, elapsed)
                     elif message == 'complex':
                         comp(myDrone)
+                        addDrawingDataComp(myDrone, dataQ, elapsed)
                     else:
                         L(myDrone)
+                        addDrawingDataL(myDrone, dataQ, elapsed)
                     moveback(myDrone)
+                    dataQ.put([myDrone.get_height(), elapsed, 0, 0, -60, 0, 0, 0, 0, 0, 0])
+                    dataQ.put([myDrone.get_height(), elapsed, 0, 0, 0, 0, 0, 0, 0, 0, 0])
                 myDrone.land()
                 # take data queue that we've been appending to and write to file
                 appendtoFile(myFile, dataQ)
