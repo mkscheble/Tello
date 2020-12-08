@@ -369,3 +369,21 @@ def moveback(myDrone):
                             myDrone.up_down_velocity,
                             myDrone.yaw_velocity)
     sleep(1)
+"Drawing functions"
+def square(myDrone):
+    dothething(myDrone, -45, 35)
+    dothething(myDrone, 33, -27)
+
+def L(myDrone):
+    dothething(myDrone, -45, 35)
+
+def staircase(myDrone):
+    dothething(myDrone, -20, 20)
+    dothething(myDrone, -20, 20)
+    dothething(myDrone, -20, 20)
+
+def comp(myDrone):
+    dothething(myDrone, -20, 20)
+    dothething(myDrone, -20, 0)
+    dothething(myDrone, 0, -20)
+    dothething(myDrone, -20, 0)

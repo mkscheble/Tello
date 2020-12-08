@@ -66,8 +66,11 @@ framerate = 50
 second = 0
 start = time.time()
 count = 0
+"prompt the user for an input for the drawing"
+print('Drawing options: square, L, staircase, complex')
+message = input('')
+dataQ.put('\n' + message + '\n')
 while True:
-
     # Flight
     if startCounter == 0:
         myDrone.takeoff()
@@ -76,7 +79,6 @@ while True:
     # Step 1 - get the frame
     img = telloGetFrame(myDrone, w, h)
     if frame == framerate:
-        # img = telloGetFrame(myDrone, w, h)
         frame = 0
     else:
         frame = frame + 1
@@ -90,7 +92,7 @@ while True:
 
     # tracking aruco tag
     img, markerCorners, markerIDs, twist = findAruco(arucoDict, img, parameters, mtx, dist)
-    # print(twist)
+
     # Step 3 - Control, This is where we apply the error from where we want to be
     elapsed = time.time() - start - second
     if boolean:
@@ -129,8 +131,14 @@ while True:
             if np.abs(pErrorxs) < 0.1 and np.abs(pError2xs) < 0.1 and np.abs(pError3xs) < 0.04 \
                     and pErrorxs != 0 and pError2xs != 0 and pError3xs != 0:
                 print('doing the thing accurate one')
-                dothething(myDrone, -45, 35)
-                dothething(myDrone, 33, -30)
+                if message == 'square':
+                    square(myDrone)
+                elif message == 'staircase':
+                    staircase(myDrone)
+                elif message == 'complex':
+                    comp(myDrone)
+                else:
+                    L(myDrone)
                 moveback(myDrone)
                 myDrone.land()
                 # take data queue that we've been appending to and write to file
@@ -143,8 +151,14 @@ while True:
                 if np.abs(pErrorxs) < 0.15 and np.abs(pError2xs) < 0.15 and pError3xs < 0.06 \
                         and pErrorxs != 0 and pError2xs != 0 and pError3xs != 0:
                     print('doing the thing lat chance throw')
-                    dothething(myDrone, -45, 35)
-                    dothething(myDrone, 33, -27)
+                    if message == 'square':
+                        square(myDrone)
+                    elif message == 'staircase':
+                        staircase(myDrone)
+                    elif message == 'complex':
+                        comp(myDrone)
+                    else:
+                        L(myDrone)
                     moveback(myDrone)
                 myDrone.land()
                 # take data queue that we've been appending to and write to file
