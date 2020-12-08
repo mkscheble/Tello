@@ -298,7 +298,7 @@ def trackArucoSmall(myDrone, tvec, pid, pid2, pid3, pError, pError2, pError3, iE
     # change these values for world coordinates (meters) where you want to be
     xdesired = 0
     ydesired = -0.15
-    zdesired = 0.34
+    zdesired = 0.24
     # Sends RC command based on distance of translation vector
 
     if np.all(tvec) != 0:
@@ -346,11 +346,11 @@ def trackArucoSmall(myDrone, tvec, pid, pid2, pid3, pError, pError2, pError3, iE
     # return errors for previous errors and PID controller
     return error, error2, error3, speed, speed2, speed3, iError, iError2, iError3
 
-def moveback(myDrone):
+def moveback(myDrone, speed):
     """This function will be the given command when we center our drone and have it the correct distance from the drone.
      Ultimately, this will be used to draw on the whiteboard."""
     sleep(1)
-    myDrone.for_back_velocity = -60
+    myDrone.for_back_velocity = speed
     myDrone.left_right_velocity = 0
     myDrone.up_down_velocity = 0
     myDrone.yaw_velocity = 0
@@ -442,3 +442,25 @@ def addDrawingDataComp(myDrone, dataQ, elapsed):
     dataQ.put([myDrone.get_height(), elapsed, 0, 0, 1, 0, 0, 0, 0, 0, 0])
     dataQ.put([myDrone.get_height(), elapsed, 0, 0, 0, 0, 0, 0, 0, 0, 0])
     dataQ.put([myDrone.get_height(), elapsed, 0, 0, 1, 0, 0, 0, 0, 0, 0])
+
+def getcloser(myDrone):
+    sleep(1)
+    myDrone.for_back_velocity = 0
+    myDrone.left_right_velocity = 0
+    myDrone.up_down_velocity = -30
+    myDrone.yaw_velocity = 0
+    myDrone.send_rc_control(myDrone.left_right_velocity,
+                            myDrone.for_back_velocity,
+                            myDrone.up_down_velocity,
+                            myDrone.yaw_velocity)
+
+    sleep(1)
+    myDrone.for_back_velocity = 2
+    myDrone.left_right_velocity = 0
+    myDrone.up_down_velocity = 0
+    myDrone.yaw_velocity = 0
+    myDrone.send_rc_control(myDrone.left_right_velocity,
+                            myDrone.for_back_velocity,
+                            myDrone.up_down_velocity,
+                            myDrone.yaw_velocity)
+    sleep(3)

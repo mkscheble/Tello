@@ -131,6 +131,7 @@ while True:
             if np.abs(pErrorxs) < 0.1 and np.abs(pError2xs) < 0.1 and np.abs(pError3xs) < 0.04 \
                     and pErrorxs != 0 and pError2xs != 0 and pError3xs != 0:
                 print('doing the thing accurate one')
+                # getcloser(myDrone)
                 if message == 'square':
                     square(myDrone)
                     addDrawingDataSquare(myDrone, dataQ, elapsed)
@@ -143,7 +144,7 @@ while True:
                 else:
                     L(myDrone)
                     addDrawingDataL(myDrone, dataQ, elapsed)
-                moveback(myDrone)
+                moveback(myDrone, -60)
                 dataQ.put([myDrone.get_height(), elapsed, 0,0,-60, 0, 0,0,0,0,0])
                 dataQ.put([myDrone.get_height(), elapsed, 0, 0, 0, 0, 0, 0, 0, 0, 0])
                 myDrone.land()
@@ -154,9 +155,10 @@ while True:
         else:
             if count == 15:
                 print('i gotta land')
-                if np.abs(pErrorxs) < 0.15 and np.abs(pError2xs) < 0.15 and pError3xs < 0.06 \
+                if np.abs(pErrorxs) < 0.15 and np.abs(pError2xs) < 0.15 and pError3xs < 0.1 \
                         and pErrorxs != 0 and pError2xs != 0 and pError3xs != 0:
                     print('doing the thing last chance throw')
+                    # getcloser(myDrone)
                     if message == 'square':
                         square(myDrone)
                         addDrawingDataSquare(myDrone, dataQ, elapsed)
@@ -169,7 +171,7 @@ while True:
                     else:
                         L(myDrone)
                         addDrawingDataL(myDrone, dataQ, elapsed)
-                    moveback(myDrone)
+                    moveback(myDrone, -60)
                     dataQ.put([myDrone.get_height(), elapsed, 0, 0, -60, 0, 0, 0, 0, 0, 0])
                     dataQ.put([myDrone.get_height(), elapsed, 0, 0, 0, 0, 0, 0, 0, 0, 0])
                 myDrone.land()
