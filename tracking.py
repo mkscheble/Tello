@@ -18,7 +18,7 @@ pid3 = [20.0, 5.0, 0.005]
 
 pidxs = [42.0, 10.0, 0.005]
 pid2xs = [65.0, 15.0, 0.005]
-pid3xs = [8.5, 10.0, 0.002]
+pid3xs = [7.0, 10.0, 0.004]
 # pError stands for previous error, used for PID controller
 pError = 0
 pError2 = 0
@@ -126,10 +126,12 @@ while True:
                                                                                                         iError3xs,
                                                                                                         elapsed)
                 count = 0
-            if np.abs(pErrorxs) < 0.1 and np.abs(pError2xs) < 0.1 and np.abs(pError3xs) < 0.1 \
+            if np.abs(pErrorxs) < 0.1 and np.abs(pError2xs) < 0.1 and np.abs(pError3xs) < 0.04 \
                     and pErrorxs != 0 and pError2xs != 0 and pError3xs != 0:
-                print('doing the thing')
-                dothething((myDrone))
+                print('doing the thing accurate one')
+                dothething(myDrone, -45, 35)
+                dothething(myDrone, 33, -30)
+                moveback(myDrone)
                 myDrone.land()
                 # take data queue that we've been appending to and write to file
                 appendtoFile(myFile, dataQ)
@@ -138,10 +140,12 @@ while True:
         else:
             if count == 15:
                 print('i gotta land')
-                if np.abs(pErrorxs) < 0.15 and np.abs(pError2xs) < 0.15 and np.abs(pError3xs) < 0.1 \
+                if np.abs(pErrorxs) < 0.15 and np.abs(pError2xs) < 0.15 and pError3xs < 0.06 \
                         and pErrorxs != 0 and pError2xs != 0 and pError3xs != 0:
-                    print('doing the thing')
-                    dothething((myDrone))
+                    print('doing the thing lat chance throw')
+                    dothething(myDrone, -45, 35)
+                    dothething(myDrone, 33, -27)
+                    moveback(myDrone)
                 myDrone.land()
                 # take data queue that we've been appending to and write to file
                 appendtoFile(myFile, dataQ)
